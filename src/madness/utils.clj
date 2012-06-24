@@ -2,6 +2,8 @@
   (:require [clojure.string :as str]
             [clj-time.format :as time-format]))
 
+(def hr-desktop [{:tag :hr :attrs {:class "visible-desktop"}}])
+
 (defn tags
   [blog]
 
