@@ -40,3 +40,14 @@
       (if (= (first posts) post)
         [prev (second posts)]
         (recur (first posts) (rest posts))))))
+
+(defn blog->table
+  [columns rows blog-posts]
+  (loop [posts blog-posts
+         c 0
+         result []]
+    (if (or (empty? posts) (and (> rows 0) (>= c rows)))
+      result
+      (recur (drop columns posts)
+             (inc c)
+             (conj result (take columns posts))))))
