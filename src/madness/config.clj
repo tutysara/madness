@@ -8,7 +8,9 @@
 (defn recent-posts [setting]
   (cond
    (= setting :columns) (or (-> config :recent-posts :columns) 3)
-   (= setting :rows) (or (-> config :recent-posts :rows) 2)))
+   (= setting :rows) (or (-> config :recent-posts :rows) 2)
+   (= setting :total) (inc (* (recent-posts :columns)
+                              (recent-posts :rows)))))
 
 (defn dirs [role]
   (cond

@@ -1,5 +1,6 @@
 (ns madness.blog.nav
   (:require [net.cgrand.enlive-html :as h]
+            [madness.config :as cfg]
             [madness.utils :as utils]))
 
 (h/defsnippet recent-item "templates/asylum3-main.html" [:#nav-recent-posts :ul :li]
@@ -19,7 +20,7 @@
 (defn recent-posts
   [all-posts]
 
-  (h/clone-for [post (take 7 all-posts)]
+  (h/clone-for [post (take (cfg/recent-posts :total) all-posts)]
                (h/substitute (recent-item (:title post) (:url post)))))
 
 (defn all-tags
