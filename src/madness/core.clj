@@ -6,10 +6,12 @@
             [madness.blog.post :as blog-post]
             [madness.blog.page :as blog-page]
             [madness.blog.atom :as blog-feed]
+            [madness.config :as cfg]
             [madness.utils :as utils]))
 
 (def blog-posts (blog/load-posts))
 (def blog-pages (blog/load-pages))
+(def blog-tag-grouped (utils/group-blog-by-tags blog-posts))
 
 (defn- render-post
   [all-posts post]
@@ -33,8 +35,18 @@
                       (apply str (blog-archive/blog-archive (str "Tag: " tag)
                                   all-posts tagged-posts)))))
 
+(defn- render-feed
+  [tag tagged-posts]
+
+  (let [fn (str "." (utils/tag-to-url tag) "atom.xml")]
+    (io/write-out-dir fn
+                      (blog-feed/emit-atom
+                       (str (cfg/atom-feed :title) ":" tag)
+                       (utils/tag-to-url tag)
+                       tagged-posts))))
+
 (defn -main
-  ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed" ":pages"))
+  ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed" ":pages" ":tag-feeds"))
   ([& args]
 
   (when (some #(= ":index" %1) args)
@@ -47,9 +59,8 @@
                                   blog-posts blog-posts))))
 
   (when (some #(= ":tags" %1) args)
-    (let [tag-grouped (utils/group-blog-by-tags blog-posts)]
-      (dorun (map #(render-archive blog-posts %1 (get tag-grouped %1))
-                  (keys tag-grouped)))))
+    (dorun (map #(render-archive blog-posts %1 (get blog-tag-grouped %1))
+                (keys blog-tag-grouped))))
 
   (when (some #(= ":posts" %1) args)
     (dorun (map (partial render-post blog-posts)
@@ -60,7 +71,9 @@
                 blog-pages)))
 
   (when (some #(= ":main-feed" %1) args)
-    (io/write-out-dir "atom.xml"
-                      (blog-feed/emit-atom blog-posts)))
-  
-  ))
+    (io/write-out-dir "blog/atom.xml"
+                      (blog-feed/emit-atom (cfg/atom-feed :title) "/blog/" blog-posts)))
+
+  (when (some #(= ":tag-feeds" %1) args)
+    (dorun (map #(render-feed %1 (get blog-tag-grouped %1))
+                (keys blog-tag-grouped))))))

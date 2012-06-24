@@ -3,9 +3,12 @@
 (defonce config (eval (read-string (slurp "settings.clj"))))
 
 (defn template
-  []
+  ([] (str "templates/" (or (-> config :template :default) "default.html")))
 
-  (str "templates/" (or (-> config :template :default) "default.html")))
+  ([role]
+     (cond
+      (= role :default) (template)
+      (= role :atom) (str "templates/" (or (-> config :template :atom) "atom.xml")))))
 
 (defn recent-posts [setting]
   (cond
@@ -20,3 +23,8 @@
    (= role :posts) (or (-> config :dirs :posts) "resources/posts")
    (= role :pages) (or (-> config :dirs :pages) "resources/pages")
    (= role :output) (or (-> config :dirs :output) "public/")))
+
+(defn atom-feed [setting]
+  (cond
+   (= setting :base-url) (or (-> config :atom :base-url) "http://localhost")
+   (= setting :title) (-> config :atom :title)))

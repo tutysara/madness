@@ -5,5 +5,4 @@
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [enlive/enlive "1.0.0"]
                  [clj-time "0.4.3"]
-                 [org.clojars.amit/commons-io "1.4.0"]
-                 [hiccup "1.0.0"]])
+                 [org.clojars.amit/commons-io "1.4.0"]])
