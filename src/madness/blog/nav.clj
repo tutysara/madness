@@ -3,14 +3,14 @@
             [madness.config :as cfg]
             [madness.utils :as utils]))
 
-(h/defsnippet recent-item "templates/asylum3-main.html" [:#nav-recent-posts :ul :li]
+(h/defsnippet recent-item (cfg/template) [:#nav-recent-posts :ul :li]
   [title url]
 
   [:a] (h/do->
         (h/set-attr :href url)
         (h/content title)))
 
-(h/defsnippet tag-item "templates/asylum3-main.html" [:#nav-tags :ul :li]
+(h/defsnippet tag-item (cfg/template) [:#nav-tags :ul :li]
   [tag]
 
   [:a] (h/do->

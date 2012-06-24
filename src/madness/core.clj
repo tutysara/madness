@@ -4,6 +4,7 @@
             [madness.blog.index :as blog-index]
             [madness.blog.archive :as blog-archive]
             [madness.blog.post :as blog-post]
+            [madness.blog.atom :as blog-feed]
             [madness.utils :as utils]))
 
 (def blog-posts (blog/load-posts))
@@ -23,7 +24,7 @@
                       (apply str (blog-archive/blog-archive all-posts tagged-posts)))))
 
 (defn -main
-  ([] (-main ":index" ":archive" ":tags" ":posts"))
+  ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed"))
   ([& args]
 
   (when (some #(= ":index" %1) args)
@@ -42,4 +43,10 @@
 
   (when (some #(= ":posts" %1) args)
     (dorun (map (partial render-post blog-posts)
-                blog-posts)))))
+                blog-posts)))
+
+  (when (some #(= ":main-feed" %1) args)
+    (io/write-out-dir "atom.xml"
+                      (blog-feed/emit-atom blog-posts)))
+  
+  ))
