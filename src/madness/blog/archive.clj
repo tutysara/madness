@@ -54,7 +54,7 @@
     (h/clone-for [p posts]
                  (h/do->
                   (h/substitute (recent-post-footer p))
-                  (h/set-attr :class (str "span"
+                  (h/set-attr :class (str "recent-post-footer span"
                                           (cfg/recent-posts :span)))))
   [:#recent-posts] (h/do->
                     (h/remove-class "visible-desktop")
