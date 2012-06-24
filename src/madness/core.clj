@@ -23,16 +23,23 @@
                       (apply str (blog-archive/blog-archive all-posts tagged-posts)))))
 
 (defn -main
-  []
+  ([] (-main ":index" ":archive" ":tags" ":posts"))
+  ([& args]
 
-  (io/write-out-dir "index.html"
-                    (apply str (blog-index/blog-index blog-posts)))
+  (when (some #(= ":index" %1) args)
+    (io/write-out-dir "index.html"
+                      (apply str (blog-index/blog-index blog-posts))))
 
-  (io/write-out-dir "archive.html"
-                    (apply str (blog-archive/blog-archive blog-posts blog-posts)))
+  (when (some #(= ":archive" %1) args)
+    (io/write-out-dir "archive.html"
+                      (apply str (blog-archive/blog-archive
+                                  blog-posts blog-posts))))
 
-  (let [tag-grouped (utils/group-blog-by-tags blog-posts)]
-    (dorun (map #(render-archive blog-posts %1 (get tag-grouped %1))
-                (keys tag-grouped))))
-  
-  (dorun (map (partial render-post blog-posts) blog-posts)))
+  (when (some #(= ":tags" %1) args)
+    (let [tag-grouped (utils/group-blog-by-tags blog-posts)]
+      (dorun (map #(render-archive blog-posts %1 (get tag-grouped %1))
+                  (keys tag-grouped)))))
+
+  (when (some #(= ":posts" %1) args)
+    (dorun (map (partial render-post blog-posts)
+                blog-posts)))))
