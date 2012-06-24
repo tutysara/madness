@@ -72,16 +72,6 @@
                  (h/content (utils/date-format (:date post)))
                  (h/remove-attr :id)))
 
-(defn- make-rows [n blog-posts]
-  (loop [posts (rest blog-posts)
-         c 0
-         result []]
-    (if (or (empty? posts) (>= c n))
-      result
-      (recur (drop (cfg/recent-posts :columns) posts)
-             (inc c)
-             (conj result (take (cfg/recent-posts :columns) posts))))))
-
 (h/deftemplate blog-index (cfg/template)
   [blog-posts]
 
@@ -89,10 +79,13 @@
                            (:summary (first blog-posts))
                            (index-read-on (first blog-posts)))
   [:#recents]
-    (h/clone-for [rows (make-rows (cfg/recent-posts :rows) blog-posts)]
+    (h/clone-for [rows (utils/blog->table
+                        (cfg/recent-posts :columns)
+                        (cfg/recent-posts :rows) (rest blog-posts))]
                  (h/do->
                   (h/substitute (recent-post-row rows))
                   (h/before [{:tag :hr}])))
   [:#post-neighbours] nil
+  [:#archive] nil  
   [:#nav-recent-posts :ul :li] (blog-nav/recent-posts blog-posts)
   [:#nav-tags :ul :li] (blog-nav/all-tags blog-posts))

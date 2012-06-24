@@ -49,23 +49,35 @@
     (h/clone-for [p posts]
                  (h/do->
                   (h/substitute (recent-post-item p))
-                  (h/set-attr :class (str "span" (cfg/archive-posts :span)))))
+                  (h/set-attr :class (str "span" (cfg/recent-posts :span)))))
   [:#recent-posts-footer :.recent-post-footer]
     (h/clone-for [p posts]
                  (h/do->
                   (h/substitute (recent-post-footer p))
                   (h/set-attr :class (str "span"
-                                          (cfg/archive-posts :span)))))
+                                          (cfg/recent-posts :span)))))
   [:#recent-posts] (h/remove-attr :id)
   [:#recent-posts-footer] (h/remove-attr :id))
 
-(defn- make-rows [blog-posts]
-  (loop [posts blog-posts
-         result []]
-    (if (empty? posts)
-      result
-      (recur (drop (cfg/archive-posts :columns) posts)
-             (conj result (take (cfg/archive-posts :columns) posts))))))
+(h/defsnippet archive-post-item (cfg/template) [:#archive-post]
+  [post]
+
+  [:#archive-post :a] (h/set-attr :href (:url post))
+  [:#archive-post-title] (h/do->
+                          (h/remove-attr :id)
+                          (h/content (:title post)))
+  [:#archive-post-date :span] (h/substitute (utils/date-format (:date post)))
+  [:#archive-post-date] (h/remove-attr :id)
+  [:#archive-post] (h/remove-attr :id))
+
+(h/defsnippet archive-posts (cfg/template) [:#archive]
+  [posts]
+
+  [:#archive] (h/remove-attr :id)
+  [:#archive-post] (h/clone-for [p posts]
+                                (h/do->
+                                 (h/substitute (archive-post-item p))
+                                 (h/after [{:tag :hr}]))))
 
 (h/deftemplate blog-archive (cfg/template)
   [title all-posts blog-posts]
@@ -75,8 +87,12 @@
   [:#hero-full] nil
   [:#full-article-footer] nil
   [:#post-neighbours] nil
+  [:#archive] (h/substitute
+               (archive-posts (drop (dec (cfg/recent-posts :total)) blog-posts)))
   [:#recents]
-    (h/clone-for [rows (make-rows blog-posts)]
+    (h/clone-for [rows (utils/blog->table
+                        (cfg/recent-posts :columns)
+                        (cfg/recent-posts :rows) blog-posts)]
                  (h/do->
                   (h/substitute (recent-post-row rows))
                   (h/before [{:tag :hr}])))

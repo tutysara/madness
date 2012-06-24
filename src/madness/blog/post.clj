@@ -78,6 +78,7 @@
 
   [:title] (h/content (:title post) " - Asylum")
   [:#recents] nil
+  [:#archive] nil
   [:.hero-unit] (h/do->
                  (h/content (blog-post-title (:title post))
                             (:summary post)
