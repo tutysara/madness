@@ -69,5 +69,6 @@
                  (h/do->
                   (h/substitute (recent-post-row rows))
                   (h/before [{:tag :hr}])))
+  [:#post-neighbours] nil
   [:#nav-recent-posts :ul :li] (blog-nav/recent-posts all-posts)
   [:#nav-tags :ul :li] (blog-nav/all-tags all-posts))

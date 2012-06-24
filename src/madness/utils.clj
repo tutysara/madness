@@ -29,3 +29,14 @@
   [blog]
 
   (reduce #(assoc %1 %2 (posts-tagged blog %2)) {} (tags blog)))
+
+(defn neighbours
+  [blog post]
+
+  (if (= (first blog) post)
+    [nil (second blog)]
+    (loop [prev (first blog)
+           posts (rest blog)]
+      (if (= (first posts) post)
+        [prev (second posts)]
+        (recur (first posts) (rest posts))))))
