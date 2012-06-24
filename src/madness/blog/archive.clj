@@ -68,14 +68,17 @@
              (conj result (take (cfg/archive-posts :columns) posts))))))
 
 (h/deftemplate blog-archive (cfg/template)
-  [all-posts blog-posts]
+  [title all-posts blog-posts]
 
-  [:.hero-unit] nil
+  [:.hero-unit :h1] (h/content title)
+  [:.hero-unit :p] nil
+  [:#hero-full] nil
+  [:#full-article-footer] nil
+  [:#post-neighbours] nil
   [:#recents]
     (h/clone-for [rows (make-rows blog-posts)]
                  (h/do->
                   (h/substitute (recent-post-row rows))
                   (h/before [{:tag :hr}])))
-  [:#post-neighbours] nil
   [:#nav-recent-posts :ul :li] (blog-nav/recent-posts all-posts)
   [:#nav-tags :ul :li] (blog-nav/all-tags all-posts))

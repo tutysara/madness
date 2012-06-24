@@ -21,7 +21,8 @@
 
   (let [fn (str "." (utils/tag-to-url tag) "index.html")]
     (io/write-out-dir fn
-                      (apply str (blog-archive/blog-archive all-posts tagged-posts)))))
+                      (apply str (blog-archive/blog-archive (str "Tag: " tag)
+                                  all-posts tagged-posts)))))
 
 (defn -main
   ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed"))
@@ -33,7 +34,7 @@
 
   (when (some #(= ":archive" %1) args)
     (io/write-out-dir "blog/archives/index.html"
-                      (apply str (blog-archive/blog-archive
+                      (apply str (blog-archive/blog-archive "Archive"
                                   blog-posts blog-posts))))
 
   (when (some #(= ":tags" %1) args)
