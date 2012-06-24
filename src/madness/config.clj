@@ -2,8 +2,10 @@
 
 (defonce config (eval (read-string (slurp "settings.clj"))))
 
-(defn template []
-  (str "templates/" (or (:template config) "default.html")))
+(defn template
+  []
+
+  (str "templates/" (or (-> config :template :default) "default.html")))
 
 (defn recent-posts [setting]
   (cond
