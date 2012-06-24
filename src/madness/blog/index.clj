@@ -84,7 +84,7 @@
                         (cfg/recent-posts :rows) (rest blog-posts))]
                  (h/do->
                   (h/substitute (recent-post-row rows))
-                  (h/before [{:tag :hr}])))
+                  (h/before utils/hr-desktop)))
   [:#post-neighbours] nil
   [:#archive] nil  
   [:#nav-recent-posts :ul :li] (blog-nav/recent-posts blog-posts)
