@@ -31,7 +31,7 @@
                       (apply str (blog-index/blog-index blog-posts))))
 
   (when (some #(= ":archive" %1) args)
-    (io/write-out-dir "archive.html"
+    (io/write-out-dir "blog/archives/index.html"
                       (apply str (blog-archive/blog-archive
                                   blog-posts blog-posts))))
 
