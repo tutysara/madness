@@ -1,0 +1,53 @@
+<article>
+  <title>Syslog-ng Debian Packages</title>
+  <date>2011-08-20 23:35</date>
+  <tags>
+    <tag>News</tag>
+    <tag>Technology</tag>
+    <tag>Debian</tag>
+    <tag>syslog-ng</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system">syslog-ng</a>
+    <a href="http://article.gmane.org/gmane.comp.sysutils.syslog-ng.announce/117">3.3.0beta2</a>
+    has been released a couple of days ago, with a ton of fixes since
+    beta1 - it's actually in such a good shape, that I will be
+    deploying it everywhere where I'm not using it already.
+  </p>
+</summary>
+
+<section>
+  <p>
+    But for that to work smoothly, I needed Debian packages of it, and
+    for squeeze, not only unstable. So I sat down early afternoon, and
+    started hacking away, pretty much repackaging it from scratch,
+    only borrowing very little from the official Debian packaging.
+  </p>
+
+  <p>
+    The end result? I have a small build farm set up, which can build
+    packages (and their dependencies, if so need be) for either stable
+    or unstable, and place them in a neat repository:
+  </p>
+
+  <blockquote>
+    <h2>Debian unstable</h2>
+    <pre>deb      http://packages.madhouse-project.org/debian unstable syslog-ng
+deb-src  http://packages.madhouse-project.org/debian unstable syslog-ng</pre>
+  </blockquote>
+
+  <blockquote>
+    <h2>Debian stable</h2>
+    <pre>deb      http://packages.madhouse-project.org/debian stable syslog-ng
+deb-src  http://packages.madhouse-project.org/debian stable syslog-ng</pre>
+  </blockquote>
+
+  <p>
+    While there's still a lot of work to be done with the packaging,
+    it is good enough to deploy on a handful of hosts. I'll iron out
+    the rest of the bugs during the coming week.
+  </p>
+</section>

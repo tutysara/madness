@@ -1,0 +1,53 @@
+<article comments="1">
+ <title>Zorp GPL APT repositories</title>
+ <date>2012-06-19 12:32</date>
+ <tags>
+   <tag>Technology</tag>
+   <tag>News</tag>
+   <tag>Zorp</tag>
+   <tag>Debian</tag>
+ </tags>
+</article>
+
+<summary>
+  <p>
+    While available for a week or two already, it took me a while to
+    update my <a href="/projects/debian/">debian project page</a> to
+    include it, but nevertheless, it is done: I am now
+    providing <a href="http://www.balabit.com/network-security/zorp-gpl/overview">Zorp
+    GPL</a> APT repositories!
+  </p>
+</summary>
+
+<section>
+  <p>
+    For the repository URLs, please see
+    the <a href="/projects/debian/">project page</a>, as that will
+    always be kept up to date.
+  </p>
+
+  <p>
+    Unlike the syslog-ng packages, the ones in the Zorp GPL repository
+    were not repackaged from scratch, and only the minimum was done to
+    them, only enough to make it possible to build and support them
+    for all platforms I host packages for. This is the reason why
+    there is no git repository for them, at least, not yet: there are
+    plans to get things right, and maintain a git repository aswell,
+    but that will need to wait a while, as that's more effort than
+    what I can spare right now.
+  </p>
+
+  <p>
+    Now go out and play! The repository contains fully functional
+    packages for modern (and not so modern) distributions, with
+    KZorp-enabled kernels and tools.
+  </p>
+
+  <p>
+    A simple <code>apt-get install zorp iptables</code> should install
+    everything you need, but a kernel. The kernel can be installed -
+    as of this writing - with a command like <code>apt-get install
+    linux-image-2.6.32-5+kzorp-amd64</code> (or <code>-486</code>, if
+    you're on a 32-bit system, and don't want a 64bit kernel).
+  </p>
+</section>

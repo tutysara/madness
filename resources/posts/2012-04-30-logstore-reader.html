@@ -1,0 +1,162 @@
+<article comments="1">
+  <title>A LogStore reader library</title>
+  <date>2012-04-30 12:45</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>Hacking</tag>
+    <tag>Clojure</tag>
+    <tag>News</tag>
+    <tag>syslog-ng</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    Early this year <a href="http://www.balabit.com/">BalaBit</a> was
+    considering to open up its LogStore file format, a format used by
+    the premium edition
+    of <a href="http://www.balabit.com/network-security/syslog-ng">syslog-ng</a>
+    that supports compression, encryption, secure timestamping and a
+    lot of other goodies.
+  </p>
+
+  <p>
+    To help further the cause of opening the format, I went ahead and
+    started to implement an API to read it (and at the same time,
+    document it too, to some extent). As of a few days ago, the
+    library is avaiable
+    on <a href="https://github.com/algernon/balabit.logstore">github</a>
+    - although not quite complete yet, but open nevertheless!
+  </p>
+</summary>
+
+<section>
+  <p>
+    This library is not only my
+    first <a href="http://clojure.org/">Clojure</a> code I release,
+    but it is also the first software I wrote in a functional language
+    (though, the library relies heavily on Java IO, and keeps state in
+    a thread-unsafe way, at least for now). For this reason, I'm both
+    proud and nervous. Proud, because it is always a great feeling to
+    release code, especially in a language one hasn't worked with
+    before, doubly so if the language is as amazing
+    as <a href="http://clojure.org/">Clojure</a> is. Nervous, because
+    working in a new language often results in non-idiomatic code;
+    code that is either inefficient, or just crude or even plain old
+    ugly.
+  </p>
+
+  <p>
+    Nevertheless, the code is available from now on, for everyone to
+    look at, and see how I write in a language I'm still learning. The
+    code is far from complete, and even though I strived
+    to <a href="http://algernon.github.com/balabit.logstore/">document
+    it throughly</a>, the current version is an early alpha-quality at
+    best.
+  </p>
+
+  <p>
+    The end goal is to have an API that is straightforward and easy to
+    use, so much so that writing a simple program that simply dumps the
+    contents of a LogStore as easy as this:
+  </p>
+
+  <pre class="prettyprint lang-clj">(ns logcat
+  (:require [balabit.logstore :as logstore]))
+
+(defun- lgs-print-msgs [record-index]
+  "Prints all the messages within any given record."
+
+  (dorun (map println (:messages (logstore/nth-record record-index)))))
+
+(logstore/with-file "/path/to/messages.store"
+  (let [indexed-records (zipmap (range (count (logstore/records))) (logstore/records))
+        chunk-records (keys (filter #(= :chunk (type (val %))) indexed-records))]
+    (dorun (map lgs-print-msgs chunk-records))))</pre>
+
+  <p>
+    This should work for all LogStores, even if they're compressed and
+    serialized, even if they're encrypted (though, in that case, we
+    will need to specify a decryption key).
+  </p>
+
+  <p>
+    But alas, it is not the library I wanted to talk about - the
+    library and its goals
+    are <a href="http://algernon.github.com/balabit.logstore/">documented</a>
+    throughly, but the language and the fun things I could do with it
+    while developing the library.
+  </p>
+
+  <p>
+    For example, function composition and multimethods allow me to write
+    code like this:
+  </p>
+
+  <pre class="prettyprint lang-clj">(defn- chunk-decode
+  "Does everything neccessary to turn the raw message data into
+  something more comprehensible, something easier to work with.
+
+  This is done by composing all of the multi-methods above."
+  [header msgcnt data data-size]
+  ((comp (partial chunk-data-deserialize header)
+         (partial chunk-decompress header data-size))
+   data))</pre>
+
+  <p>
+    Depending on the chunk flags, a chunk can be either compressed or
+    not, or serialized or not, and any combination of this two. The
+    above function handles them all, thanks to
+    multi-methods. Composing them this way fills me with joy, it is
+    powerful, yet easy to understand.
+  </p>
+
+  <p>
+    Multi-methods allow me to grab a header, and depending on their
+    value, implement - for example - deserialization based on the
+    header's contents, and the language will dispatch it to the
+    appropriate method. This is very, very convenient, and has made my
+    life in this project and in others a whole lot easier.
+  </p>
+
+  <p>
+    Macros are another thing that makes Clojure (and LISPs in general)
+    very attractive to me. The entire <tt>balabit.logstore</tt>
+    namespace is nothing else than a collection of convenience
+    macros. Ever since I was exposed to them, I miss them dearly in
+    other languages I have to code in.
+  </p>
+
+  <p>
+    But apart from language features, the Clojure ecosystem is also
+    very mature and powerful. To name a few examples,
+    the <a href="https://github.com/marick/Midje">midje</a> testing
+    system,
+    the <a href="https://github.com/fogus/marginalia">marginalia</a>
+    documentation system are all things I find very hard to live
+    without when not working with Clojure.
+  </p>
+
+  <p>
+    The community is yet another thing that keeps me interested in the
+    language: <a href="http://planet.clojure.in/">Planet Clojure</a>
+    is always full of good reads, and not always strictly
+    Clojure-related.
+  </p>
+
+  <p>
+    And to wrap it up, lets get back to the library! Development from
+    now on will be done
+    in <a href="https://github.com/algernon/balabit.logstore">public</a>,
+    and a formal description of the LogStore format will follow soon,
+    together with the implementation of missing features from the
+    library.
+  </p>
+
+  <p>
+    With a bit of luck, this library can evolve into something that
+    makes it a lot easier to work with data stored within a LogStore,
+    and we'll see third party applications making use of the storage
+    format too - even if only as a source.
+  </p>
+</section>

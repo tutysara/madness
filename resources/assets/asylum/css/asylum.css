@@ -1,0 +1,18 @@
+body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+}
+.sidebar-nav {
+        padding: 9px 0;
+}
+.hero-unit h1 {
+        margin-bottom: 0.5em;
+}
+
+.btn-info {
+        color: #222;
+}
+
+.recent-post-footer a {
+        margin-bottom: 0.5em;
+}

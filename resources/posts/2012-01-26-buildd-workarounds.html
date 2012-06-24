@@ -1,0 +1,164 @@
+<article comments="1">
+  <title>Debian buildd workarounds</title>
+  <date>2012-01-26 17:00</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>Debian</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    There's an ages old problem with the way Debian buildds build
+    packages: they call the <em>build</em> target, which - by design -
+    builds everything, be that architecture dependent or not.
+  </p>
+
+  <p>
+    Many of us don't like that all that much, for different
+    reasons. Fortunately, there are reasonable workarounds!
+  </p>
+</summary>
+
+<section>
+  <p>
+    There are at least three compelling reasons why one does not wish
+    to build architecture-independent parts of a package when building
+    on a buildd (and quite often, more than one reason applies):
+  </p>
+
+  <ol>
+    <li>
+      Building the arch-indep things takes a long time - and can
+      potentially make the build time out.
+    </li>
+    <li>
+      Building the arch-indep things needs sizable extra
+      build-dependencies, that the arch-dependent build does
+      not. Having to install an extra gigabyte of packages to build a
+      set of API docs, that won't even be included in the upload is a
+      wee-bit wasteful.
+    </li>
+    <li>
+      Aesthetics. Because building useless things is a waste of
+      everyone's time, slow buildds especially.
+    </li>
+  </ol>
+
+  <p>
+    Now, how do you get around the problem of buildds calling the
+    <strong>build</strong>? We could wait and hope (or even send a patch,
+    wish I had the time!) that the buildds will be updated to use the
+    <strong>build-arch</strong> and <strong>build-indep</strong>
+    targets, but those of us who need an immediate solution, can't do
+    that.
+  </p>
+
+  <p>
+    So we cheat. We cheat, by disabling the <strong>build</strong>
+    target, turning it into a no-op: this is allowed by Policy, which
+    reads:
+  </p>
+
+  <blockquote><p><i>The build target <strong>should</strong> perform
+  all the configuration andcompilation of the
+  package.</i></p></blockquote>
+
+  <p>
+    It's only a should, so it's safe to make it a no-op. We can then
+    use the <strong>build-arch</strong>
+    and <strong>build-indep</strong> targets, which will be depended
+    upon by the <strong>binary-arch</strong>
+    and <strong>binary-indep</strong> targets, and the buildds call
+    only the former. When they do that, that will trigger the
+    <strong>build-arch</strong> target too!
+  </p>
+
+  <p>
+    And with that, we have a package that will only build arch-indep
+    parts when it needs to.
+  </p>
+
+  <p>
+    Depending on whether one uses <strong>dh</strong> short form, or a
+    traditional <code>debian/rules</code>, here's an outline of how
+    the rules file could look like:
+  </p>
+
+  <pre class="prettyprint lang-make">build: ;
+build-arch:
+	# Do stuff to build arch-dependent stuff here
+build-indep:
+	# Do stuff to build arch-indep stuff here
+binary-arch: build-arch
+	# ...
+binary-indep: build-indep
+	# ...
+binary: binary-arch binary-indep
+
+.PHONY: build build-arch build-indep binary-arch binary-indep binary</pre>
+
+  <p>
+    With <strong>dh</strong> short form, this looks a bit different,
+    because you don't need to set up dependencies, debhelper does that
+    for us. We simply override the build: target, as per the above,
+    and use the -arch and -indep variants of the <tt>dh_auto_*</tt>
+    family of overrides. This can be either trivial, or complicated,
+    depending on the build system.
+  </p>
+
+  <p>
+    The basic idea is that we disable the <em>-indep</em> variant of
+    those targets that we do not need, and leave the rest alone. If
+    you need to override any of the other <tt>dh_auto_*</tt> stuff,
+    override the <em>-arch</em> variant instead.
+  </p>
+
+  <p>
+    This will result in a rules file that could look like this:
+  </p>
+
+  <pre class="prettyprint lang-make">build: ;
+
+override_dh_auto_configure-arch:
+	dh_auto_configure -- --my-special-param
+override_dh_auto_build-arch:
+	dh_auto_build
+
+override_dh_auto_configure-indep: ;
+override_dh_auto_test-indep: ;
+override_dh_auto_install-indep: ;
+
+override_dh_auto_build-indep:
+	# Do stuff here to build arch-indep stuff, like
+	# running doxygen.
+
+%:
+	dh $@</pre>
+
+  <p>
+    And that's about it! We now have a package that won't build
+    arch-indep parts on buildds, so you can sleep peacefully that you
+    could move huge build-dependencies
+    to <em>Build-Depends-Indep</em>, that buildds won't spend time
+    building docs and other data that they don't need to, and the
+    solution isn't all that ugly, either!
+  </p>
+
+  <p>
+    Even better, once buildds start using <em>build-arch</em>, these
+    rules files will continue to work, and all that is needed to make
+    them aesthetically pleasing is to make the <em>build:</em> target
+    depend on <em>build-arch</em> and <em>build-indep</em>.
+  </p>
+
+  <p>
+    The only downside of this workaround is that <code>debian/rules
+    build</code> will not do the expected thing.
+  </p>
+
+  <p>
+    Personally, I can live with that: in the vast majority of cases, I
+    want to make a binary package, not just build the sources.
+  </p>
+</section>

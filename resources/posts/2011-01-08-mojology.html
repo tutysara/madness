@@ -1,0 +1,114 @@
+<article comments="1">
+  <title>mojology: mongodb and syslog-ng meet the web</title>
+  <date>2011-01-08 23:05</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>syslog-ng</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    During the past couple of nights, I was busy coming up with
+    something that would showcase the power
+    of <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system">syslog-ng</a>
+    combined with the <a href="/projects/syslog-ng/mongodb/">mongodb
+    destination</a>, and that is
+    how <a href="http://mojology.madhouse-project.org/">mojology</a>
+    was born.
+  </p>
+</summary>
+
+<section>
+
+  <p>
+    To sum it up: it's a web based log browser, a reasonably simple
+    one: one can't search, or do advanced filtering (yet!), only a few
+    basic stuff.
+  </p>
+
+  <p>
+    The interesting part comes from the fact that the logs it displays
+    are stored in <a href="http://www.mongodb.org/">mongodb</a>, a
+    document store, and as such, the structure of them is very, very
+    flexible. Although, the application does make a few assumptions
+    (see
+    the <a href="http://mojology.madhouse-project.org/about">about
+    page</a> or
+    the <a href="https://github.com/algernon/mojology/blob/master/README.rst">readme</a>
+    in
+    the <a href="https://github.com/algernon/mojology">sources</a>),
+    it still retains a lot of flexibility.
+  </p>
+
+  <p>
+    Without going into the gory details (that's what the source is for
+    ;), let me show you a few interesting pages!
+  </p>
+
+  <h2>Examples<hr></h2>
+
+  <h3><a href="http://mojology.madhouse-project.org/log/4d28cd01f310ef4f00000024">Hacking
+  the database</a></h3>
+
+  <p>This one was originally made with the following command:</p>
+
+  <pre>logger -i -t hi 'Hello World! This concludes our demo session.'</pre>
+
+  <p>
+    Then I went into the MongoDB shell and added a few other keys
+    below the <strong>dyn</strong> sub-document, alongside the default
+    <strong>classifier</strong> (courtesy of patterndb).
+  </p>
+
+  <p>
+    As you can see, no matter how deep one nests, it still displays
+    properly. It's also easy to query, even at such depths.
+  </p>
+
+  <h3><a href="http://mojology.madhouse-project.org/log/4d28cba4f310ef4f0000001e">Logging
+  in via SSH</a></h3>
+
+  <p>
+    Logging in from one computer to my desktop, using password
+    authentication. This entry was made fully automatically.
+  </p>
+
+  <h2>Other notes</h2>
+
+  <p>
+    The database behind the demo application is fairly small, only 39
+    messages stored, but hey, it's a demo!
+  </p>
+
+  <p>
+    The program itself is a little over a hundred lines of python +
+    templates; built upon <a href="http://flask.pocoo.org/">Flask</a>
+    & <a href="https://github.com/mongodb/mongo-python-driver/">PyMongo</a>.
+  </p>
+
+  <p>
+    For the best experience, a recent browser is strongly advised:
+    Chromium 6+, Firefox 4+ for best results; Firefox 3 works very
+    well too, but some of the tiny cosmetic features do not; the site
+    displays in IE7+ too, and can be used, but the experience is
+    rather disappointing.
+  </p>
+
+  <p>
+    I hope this little weekend hack helps demonstrate how flexible
+    <a href="http://www.mongodb.org/">mongodb</a> can be for logging,
+    and how
+    well <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system">syslog-ng</a>
+    can make use of that flexibility.
+  </p>
+
+  <h2>Installation</h2>
+
+  <pre>$ git clone git://github.com/algernon/mojology.git
+$ virtualenv --no-site-packages mojology
+$ cd mojology
+$ . bin/activate
+$ pip install -r requirements.txt
+$ python server.py</pre>
+</section>

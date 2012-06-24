@@ -1,0 +1,104 @@
+<article comments="1">
+  <title>Clojorful Adventures</title>
+  <date>2011-08-21 03:45</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>Clojure</tag>
+    <tag>Hacking</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    <a href="http://algernon.blogs.balabit.com/2011/08/clojuration/">Earlier</a>,
+    on my <a href="http://algernon.blogs.balabit.com/">work blog</a> I
+    mused about a simple <a href="http://clojure.org/">Clojure</a>
+    function, that trims a string at word boundaries (more or less),
+    and compared it to <a href="http://haskell.org/">Haskell</a> and
+    Python code. Today, I will revisit the same code here, and fix a
+    little bug in it.
+  </p>
+</summary>
+
+<section>
+  <p>
+    For reference, here's how the original Clojure function looked like:
+  </p>
+
+  <pre class="prettyprint lang-clj">(defn trim-at-boundary [string max-len]
+  (if (&lt; (.length string) max-len)
+    string
+    (str (s/take
+          (reduce #(if (&lt; (+ (.length %1) (.length %2) 1) (- max-len 3))
+                     (str %1 " " %2) %1)
+                  (s/split string #"\s"))
+          (- max-len 3))
+         " ...")))</pre>
+
+  <p>
+    Do notice the subtle bug in the reduce function:
+  </p>
+
+  <pre class="prettyprint lang-clj">(if (&lt; (+ (.length %1) (.length %2) 1) (- max-len 3))
+       (str %1 " " %2) %1)</pre>
+
+  <p>
+    The intention was to stop reducing when our result would overflow,
+    but this reduction function doesn't do that: it does not stop
+    then! If any words past the point we should be trimming at is
+    short enough to still fit into the limit, it will be appended to
+    the list.
+  </p>
+
+  <p>
+    This is unfortunate, as the result will have garbage at the end.
+  </p>
+
+  <p>
+    As a workaround, we can pass the first argument as a list, the
+    first part of it being the word, the second a boolean, that marks
+    whether we should continue reducing, or not. The result of the
+    reduce will be a two-element list aswell, but we just take its
+    head, and we're good to go!
+  </p>
+
+  <p>
+    In the end, the result looks like this:
+  </p>
+
+  <pre class="prettyprint lang-clj">(defn trim-at-boundary
+  [string max-len]
+  (if (&lt; (.length string) max-len)
+    string
+    (let [words (s/split string #"\s"), stop-len (- max-len 3)]
+      (str (s/take
+            (first (reduce
+                    #(let [[a finished] %1, b %2]
+                       (if (or finished
+                               (&gt;= (+ (.length a) (.length b) 1) stop-len))
+                         (list a true)
+                         (list (str a " " b) false)))
+                    (list (first words) false) (rest words)))
+            stop-len)
+           "..."))))</pre>
+
+  <p>
+    The major change is the reduction function: it first destructures
+    the parameters, the first into two parts, <em>a</em>
+    and <em>finished</em>, the second into <em>b</em>. Then,
+    if <em>finished</em> is set, or the length of the current string
+    and the next word is over the limit, we return a pair of the first
+    string extracted earlier and <em>true</em>, signalling that we're
+    finished.
+  </p>
+
+  <p>
+    If that condition fails, we concatenate our two strings, and slap
+    a <em>false</em> after it.
+  </p>
+
+  <p>
+    I'm sure it can be done more efficiently, but sadly, my
+    Clojure-knowledge is still quite low.
+  </p>
+</section>

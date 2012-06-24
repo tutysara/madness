@@ -1,0 +1,79 @@
+<article comments="1">
+  <title>libcee-syslog</title>
+  <date>2012-03-20 01:35</date>
+  <tags>
+    <tag>syslog-ng</tag>
+    <tag>Technology</tag>
+    <tag>News</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    Today, during a teleconference with
+    fellow <a href="https://fedorahosted.org/lumberjack/">Lumberjackers</a>,
+    I got reminded that back in Brno, I wanted to write a tiny little
+    library, that works as a drop-in replacement for
+    the <code>syslog()</code> function in libc, but instead of
+    emitting legacy syslog, uses a CEE JSON payload.
+  </p>
+</summary>
+
+<section>
+  <p>
+    I spent a few hours at work, and a few hours at home ironing out
+    the details, and in the end, we now have something that does
+    pretty much what I want it to do, bar a few missing pieces:
+    <a href="https://github.com/algernon/libumberlog">libumberlog</a>!
+  </p>
+
+  <p>
+    (The project was originally called <tt>libcee-syslog</tt>, but was
+    later renamed to <tt>libumberlog</tt>; and this post was updated.)
+  </p>
+
+  <p>
+    It's a library that can either be used as a drop-in replacement
+    for <code>syslog()</code> (via <tt>LD_PRELOAD</tt> or direct
+    linking), and then turns legacy syslog messages into CEE-style
+    stuff with a JSON payload, and also adds some automatically
+    discoverable fields to the payload (such as the facility, the
+    priority and the pid; with more to follow).
+  </p>
+
+  <p>
+    It can also be used as a proper stand-alone library, that provides
+    a slightly improved <code>syslog()</code>-style API, that allows
+    one to add arbitrary key-value pairs to the payload.
+  </p>
+
+  <p>
+    At the moment, the thing lacks tests, documentation and examples,
+    but it's very short code, easy to understand too.
+  </p>
+
+  <p>
+    But, lets see an example, for fun!
+  </p>
+
+  <pre class="prettyprint lang-c">#include &lt;umberlog.h&gt;
+
+int
+main (int argc, char *argv[])
+{
+  openlog ("umberlog-test", LOG_UL_NOCACHE, LOG_LOCAL0);
+
+  /* Legacy syslog */
+  syslog (LOG_DEBUG, "hello, %s!", "algernon");
+
+  /* Improved syslog */
+  ul_syslog (LOG_DEBUG, "hello, %s!", "algernon",
+             "foo", "%s", "baz",
+             "baz", "bar",
+             "random_number", "%d", 42,
+             NULL);
+
+  closelog ();
+  return 0; 
+}</pre>
+</section>

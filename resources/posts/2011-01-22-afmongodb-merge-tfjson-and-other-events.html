@@ -1,0 +1,59 @@
+<article comments="1">
+  <title>afmongodb merge, tfjson and other events</title>
+  <date>2011-01-22 20:34</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>syslog-ng</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    As of a few hours ago, the bigger part of
+    my <a href="/projects/syslog-ng/mongodb/">afmongodb</a> driver has
+    been merged to the
+    official <a href="http://git.balabit.hu/?p=bazsi/syslog-ng-3.3.git;a=summary">syslog-ng
+    3.3</a> tree!
+  </p>
+</summary>
+
+<section>
+
+  <p>
+    A few things remain to be done, however:
+  </p>
+
+  <ul>
+    <li>
+      Authentication doesn't work. This is due to the underlying
+      <a href="https://github.com/algernon/libmongo-client">client
+      library</a> not supporting it yet. The code is still in the
+      driver, commented out, and
+      once <a href="https://github.com/algernon/libmongo-client">libmongo-client</a>
+      gains authentication support, it can be re-enabled.
+    </li>
+
+    <li>
+      Dynamic variable support. While this is one of the major selling
+      points of the driver, this functionality will be added as a
+      generic framework, which all drivers can use, if they wish
+      to. The plan is to get the framework coded and merged, then the
+      driver updated to support it.
+    </li>
+  </ul>
+
+  <p>
+    Apart from the above two, of which, the second will be a tricky
+    thing to implement, the driver is complete and as far as my tests
+    show, stable.
+  </p>
+
+  <p>
+    In other news, starting this past week, I'll be working on
+    <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system">syslog-ng
+    OSE</a> during my work hours each friday. The first result is a
+    port of Balint
+    Kovacs' <a href="http://article.gmane.org/gmane.comp.syslog-ng/10521">JSON
+    template formatting function</a>, but more work will follow.
+  </p>
+</section>

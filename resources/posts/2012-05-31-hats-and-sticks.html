@@ -1,0 +1,56 @@
+<article comments="1">
+  <title>Hats and sticks, and logs of history</title>
+  <date>2012-05-31 17:30</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>News</tag>
+    <tag>syslog-ng</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    As <a href="http://article.gmane.org/gmane.comp.syslog-ng/13639">announced
+    earlier</a>, <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system/overview">syslog-ng
+    OSE 3.3</a> has a new maintainer, yours truly. With this new hat on,
+    I <a href="http://article.gmane.org/gmane.comp.syslog-ng/13647">posted
+    a roadmap</a> to the mailing list, which I will not repeat here,
+    not in detail anyway.
+  </p>
+</summary>
+
+<section>
+  <p>
+    Being a stable series, there aren't many things I'll change, the
+    major thing is that I will provide a separate patch along the
+    source tarball that makes it possible to use upstream ivykis with
+    syslog-ng, instead of the patched work it currently includes. This
+    should make it easier for distributions that dislike (or even
+    forbid) embedded copies, while still maintaining the current
+    patched version as a default for everyone else. Eventually, the
+    remaining patches will be sent upstream too, but that's out of the
+    scope of the 3.3 series.
+  </p>
+
+  <p>
+    Apart from that, the rest of the roadmap items are various fixes
+    that turned up after the last 3.3.5 release. If all goes well,
+    we'll have a 3.3.6 release in a couple of weeks, targeting
+    mid-June. At that point, it would even be possible to get a
+    syslog-ng into Debian which uses the upstream ivykis library, and
+    that would make me
+    <strong>very</strong> happy.
+  </p>
+
+  <p>
+    I'd like to grab this opportunity to ask interested parties to
+    test syslog-ng 3.3, and report any issues either to the mailing
+    list, or to
+    our <a href="http://bugzilla.balabit.com/">BugZilla</a>, so that
+    3.3.6 becomes a rock solid release, and so that I won't have to do
+    a 3.3.7. While I'm flattered by Bazsi's trust in me, and I enjoy
+    working on syslog-ng, my goal in this case is to have a single
+    rock solid release, as that benefits everyone best. I hope I will
+    be able to achieve that goal.
+  </p>
+</section>

@@ -1,0 +1,95 @@
+<article comments="1">
+  <title>Ruby, Debian and me</title>
+  <date>2010-12-29 16:05</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>Rants</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    I'm a lazy person. When I'm at the computer, tinkering with
+    something, I want to get done fast, I do not want to fight with the
+    system, I just want to install whatever tools I need, and start
+    hacking away.
+  </p>
+</summary>
+
+<section>
+  <p>
+    For this reason, I strongly prefer installing packages from my
+    distribution, globally, so that they are available to all of my
+    projects. This is a fast and reliable way to get started, since my
+    distribution of choice has fairly high quality packages. I trust
+    the maintainers that they make sure that upgrades won't break
+    existing software, and if a new upstream version comes out, which
+    is not backwards compatible, they'll handle it in a sane way:
+    create a new binary package. Security fixes can then be backported
+    to the old version still in the distribution, and one is not
+    forced to upgrade every component that uses a particular module,
+    just because a security fix came out, and one had to upgrade to a
+    completely new version.
+  </p>
+
+  <p>
+    Part of the reason I absolutely <strong>hate</strong> ruby
+    nowadays is due to their stance of <quote>"We're a fast moving
+    community. Keep up, or get out"</quote>. It has often been my
+    experience that many gems broke backwards compatibility without a
+    warning, within a minor revision. I don't like that. I hate
+    that. That forces me to update everything I wrote that uses said
+    gem, because I'm sure as hell not going to keep a million
+    different versions lying around on my system.
+  </p>
+
+  <p>
+    When I read stories such
+    as <a href="http://ryanbigg.com/2010/12/ubuntu-ruby-rvm-rails-and-you/">this</a>,
+    which, I quote:
+  </p>
+
+  <blockquote>
+    Under no circumstance should you install Ruby, Rubygems or any
+    Ruby-related packages from apt-get.  This system is out-dated and
+    leads to major headaches. Avoid it for Ruby-related packages. We
+    do Ruby, we know what's best. Trust us.
+  </blockquote>
+
+  <p>
+    I get angry. They might do Ruby, but they're not distribution
+    maintainers. It's not their area of expertise, and to be frank,
+    they're doing a very poor job at that. I trust the Debian
+    maintainers, because I know them, I have been one myself, and they
+    made an amazing distribution, which haven't failed me since I
+    first installed it in 1999. Ruby, and ruby gems failed me within
+    an hour, and I should trust <strong>them</strong>? Bloody hell,
+    <strong>NO</strong>.
+  </p>
+
+  <p>
+    If I wanted to compile everything myself, I would use a source
+    based distribution. But I don't have time for that: I want my
+    stuff to work, out of the box. That's why I use a
+    distribution. And frankly, the Debian Ruby maintainers do hell of
+    a good job! Working within such a hostile environment must be
+    frustrating, yet, the quality of most ruby packages in Debian is
+    fairly good.
+  </p>
+
+  <p>
+    I am using redmine (installed via apt-get), works fine, as long as
+    I don't need the newer features. I tried to install a new version
+    once, and after two hours of immense pain, I gave up. At that
+    point, I made a vow: if I ever have to use anything ruby, it will
+    be from the Debian repository. I'm never ever going to use RVM or
+    gems or any of the other nonsense they came up with.
+  </p>
+
+  <p>
+    But better yet, I will try my best to steer clear of Ruby: however
+    a good language it might be (though, I fail to see it's
+    greatness), the community hates me, even though they don't know
+    me. So, no thanks, no Ruby for me.
+  </p>
+</section>

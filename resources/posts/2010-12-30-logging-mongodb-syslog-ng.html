@@ -1,0 +1,145 @@
+<article comments="1">
+  <title>Logging to MongoDB with syslog-ng</title>
+  <date>2010-12-30 18:30</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>syslog-ng</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    I was contemplating switching over one of the websites I maintain
+    (<a href="http://www.bajcsinagy.com/">my brother's</a>) from a
+    PostgreSQL backend to one of these fancy document-stores. Now, I
+    know next to nothing about these, so I started exploring, and on
+    the <a href="http://www.mongodb.org/">MongoDB</a> site, I found an
+    <a href="http://blog.mongodb.org/post/172254834/mongodb-is-fantastic-for-logging">interesting
+    article</a>, which praised MongoDB as being wonderful for
+    logging. That made sense, and I immediately got side tracked.
+  </p>
+</summary>
+
+<section>
+  <p class="well">
+    <span class="label label-important">Update!</span>
+
+    This little hack has it's
+    own <a href="/projects/syslog-ng/mongodb/">project page</a> now,
+    updates will be posted there.
+  </p>
+
+  <p>
+    You see, at <a href="http://www.balabit.com/">work</a>, I recently
+    had to deal with logging to SQL, and it was a painful experience
+    to say the least. I was curious how hard it would be to teach
+    <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system">syslog-ng</a>
+    to send logs to MongoDB.
+  </p>
+
+  <p>
+    Luckily, MongoDB has
+    a <a href="http://www.mongodb.org/display/DOCS/C+Language+Center">C
+    client</a>, which I based my work upon. It might not be the best
+    choice, especially since I ended up embedding it, but for an alpha
+    version of the destination driver, it'll do.
+  </p>
+
+  <p>
+    Once I had both the C client and the syslog-ng sources, it was
+    time to dive in! I already knew syslog-ng is reasonably easy to
+    understand, but to be honest, I was suprised how easy it
+    is. Within four hours, without any prior experience with hacking
+    syslog-ng OSE, I had a fully functional MongoDB destination
+    driver. Amazing!
+  </p>
+
+  <p>
+    All I had to do, was copy the dummy driver, fill in the blanks
+    (mostly based on the SQL driver, especially the key-value
+    configuration part), and voila.
+  </p>
+
+  <p>
+    I will not bore anyone with the implementation details, as it is
+    available from
+    the <a href="http://git.madhouse-project.org/syslog-ng/syslog-ng-3.2/log/?h=algernon/dest/mongodb">MadHouse
+    git repository</a>:
+  </p>
+
+  <pre>$ git clone -b algernon/dest/mongodb \
+      git://git.madhouse-project.org/syslog-ng/syslog-ng-3.2.git</pre>
+
+  <p>
+    Build and install as usual, and you're good to go. To test it, you
+    will need a mongodb server; I simply used _apt-get install
+    mongodb_ to obtain one. After that, one needs to configure an
+    appropriate destination:
+  </p>
+
+  <pre>destination d_mongodb {
+  mongodb();
+};</pre>
+
+  <p>
+    This will use the default settings: connecting to localhost's
+    27017 port, to the syslog-ng database, and will log the standard
+    fields (date, facility, level, host, program, pid and message) to
+    the "logs" collection. The same can be achieved with the following
+    destination setup:
+  </p>
+
+  <pre>destination d_mongodb {
+  mongodb(
+    host("localhost")
+    port(27017)
+    database("syslog-ng")
+    collection("logs")
+    keys("date", "facility", "level", "host", "program", "pid", "message")
+    values("${R_YEAR}-${R_MONTH}-${R_DAY} ${R_HOUR}:${R_MIN}:${R_SEC}", 
+           "$FACILITY", "$LEVEL", "$HOST", "$PROGRAM", "$PID", "$MSGONLY")
+  );
+};</pre>
+
+  <p>
+    With this set up, we can start syslog-ng, and send some messages,
+    then inspect the database:
+  </p>
+
+  <pre>$ mongo syslog-ng
+MongoDB shell version: 1.4.4
+url: syslog-ng
+connecting to: syslog-ng
+type "help" for help
+&gt; db.logs.find()
+{ "_id" : ObjectId("4d1ccab6969b9db4ccc4bb76"), "date" : "2010-12-30 19:08:54", "facility" : "user",
+ "level" : "notice", "host" : "localhost", "program" : "algernon-test", "pid" : "22796",
+ "message" : "Hello World!" }</pre>
+
+  <p>
+    Awesome, isn't it?
+  </p>
+
+  <p>
+    Now, imagine how this can be useful when combined
+    with <a href="http://blog.mongodb.org/post/116405435/capped-collections">capped
+    collections</a>... the last few hundred logs always available to a
+    web application, fast and painless, all automated, distributed and
+    a lot of other buzzwords.
+  </p>
+
+  <p>
+    With the version of the driver that I have here as of this
+    writing, I managed to push out about <strong>17k</strong> messages
+    a second on my desktop computer, which was fairly busy doing other
+    stuff aswell. That's not too bad, and probably orders of
+    magnitudes better than what can be accomplished with an SQL store.
+  </p>
+
+  <p>
+    In any case, the code is available, and I will keep tweaking it -
+    there's certainly room for improvement still. If anything
+    interesting happens regarding this little toy, I will keep you
+    posted.
+  </p>
+</section>

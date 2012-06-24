@@ -1,0 +1,361 @@
+<article comments="1">
+  <title>HOWTO: syslog-ng + mongodb</title>
+  <date>2012-04-26 15:45</date>
+  <tags>
+    <tag>syslog-ng</tag>
+    <tag>Technology</tag>
+    <tag>HOWTO</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    There is a growing interest in
+    getting <a href="http://syslog-ng.com/opensource-logging-system/">syslog-ng</a>
+    to log to <a href="http://www.mongodb.org">MongoDB</a>, and there
+    is not a single howto out there that would explain the various
+    bits and pieces of the configuration.
+  </p>
+
+  <p>
+    For some, reading the source or asking on
+    the <a href="https://lists.balabit.hu/mailman/listinfo/syslog-ng">mailing
+    list</a> works, for the rest, read on!
+  </p>
+</summary>
+
+<section>
+  <p>
+    In this document, I will be talking about syslog-ng 3.4, the
+    development version as of this writing. However, most of it
+    applies to the current stable, 3.3, too, and these differences
+    will be aptly highlighted.
+  </p>
+
+  <p>
+    The basic configuration that works right out of the box, remained the
+    same:
+  </p>
+
+  <pre>destination d_mongodb {
+  mongodb();
+}</pre>
+
+  <p>
+    This uses the default configuration, which is:
+  </p>
+
+  <pre>destination d_mongodb {
+  mongodb(
+    servers("localhost:27017") # Replaces the host() & port() options of 3.3
+    database("syslog")
+    collection("messages")
+    safe-mode(no) # Not supported by 3.3!
+    value-pairs(scope("selected-macros" "nv-pairs"))
+  );
+};</pre>
+
+  <p>
+    All of the options should be self explanatory, I believe: you can
+    list multiple <em>host:port</em> pairs in the <tt>servers()</tt>
+    option (but the <tt>host()</tt> and <tt>port()</tt> options from
+    3.3 continue to work, for compability's sake),
+    and <tt>safe-mode()</tt> can be toggled on and off, as one would
+    expect. The most interesting part of the configuration is
+    <tt>value-pairs()</tt> no doubt, that setting controls what gets
+    into the database, and in what format.
+  </p>
+
+  <p>
+    It is not strictly tied to the MongoDB destination (the JSON
+    template function uses it too, under the hood, for example), but
+    this is a great opportunity to explain what the setting can do for
+    you, and how various common tasks can be accomplished with its
+    help.
+  </p>
+
+  <h2>Value pairs<hr></h2>
+
+  <p>
+    The basic idea behind <tt>value-pairs()</tt> is that it allows one to
+    control which key-value pairs shall be considered for use. Think
+    of it like a <tt>SELECT</tt> in ye olde SQL, just done our way.
+  </p>
+
+  <h3>The basics<hr></h3>
+
+  <p>
+    As a first step, one needs to select a default <tt>scope()</tt>, which can
+    be a combination of any of the following:
+  </p>
+
+  <dl>
+    <dt>
+      <em>base</em>, <em>core</em>,
+      or <em>rfc3164</em>
+    </dt>
+    <dd>
+      This scope contains all the keys that are part of a normal,
+      legacy syslog
+      message: <em>FACILITY</em>, <em>PRIORITY</em>, <em>HOST</em>,
+      <em>PROGRAM</em>, <em>PID</em>, <em>MESSAGE</em>
+      and <em>DATE</em>.
+    </dd>
+
+    <dt>
+      <em>syslog-proto</em>, or <em>rfc5424</em>
+    </dt>
+    <dd>
+      This scope contains all the keys of the new syslog-protocol,
+      which is to say, all of the keys from the base, along with
+      <em>MSGID</em>.
+    </dd>
+
+    <dt>
+      <em>selected-macros</em>
+    </dt>
+    <dd>
+      Contains the <em>TAGS</em>, <em>SOURCEIP</em>
+      and <em>SEQNUM</em> macros on top of the core set.
+    </dd>
+
+    <dt>
+      <em>all-macros</em>
+    </dt>
+    <dd>
+      This is a scope for all macros - it is rarely useful, so I'm not
+      going to go into detail.
+    </dd>
+
+    <dt>
+      <em>sdata</em>
+    </dt>
+    <dd>
+      As the name implies, is for all SDATA (of rfc5424 fame) keys. If
+      you have sources that send logs with embedded SDATA, this is the
+      scope you want, if you want to log these.
+    </dd>
+
+    <dt>
+      <em>nv-pairs</em>
+    </dt>
+    <dd>
+      Refers to all keys that are set one way or the other: through
+      patterndb, csvparser, json-parser or manually. This does not
+      include keys starting with a dot - syslog-ng treats those as
+      internal.
+    </dd>
+
+    <dt>
+      <em>dot-nv-pairs</em>
+    </dt>
+    <dd>
+      Is the scope for the rest of the name-value pairs: the ones
+      beginning with a dot.
+    </dd>
+
+    <dt>
+      <em>all-nv-pairs</em>
+    </dt>
+    <dd>
+      This scope is a combination of the previous two.
+    </dd>
+
+    <dt>
+      <em>everything</em>
+    </dt>
+    <dd>
+      Needless to say, this scope includes everything, and is a
+      combination of all of the above.
+    </dd>
+  </dl>
+
+  <p>
+    The scope determines the base set - but you can add new keys to
+    it, or even exclude. The <tt>key()</tt> and <tt>exclude()</tt>
+    options are the ways to accomplish this, both take a glob-pattern
+    (in 3.4; 3.3 does not support globs in the <tt>key()</tt> option,
+    only exact key names), and will add in, or exclude any key that
+    matches that set. These are evaluated in order, so if you first
+    exclude something, and a subsequent statement adds it back, it
+    will be back - or the other way around. However,
+    the <tt>scope()</tt> is always evaluated first, regardless of
+    where it appears in the config.
+  </p>
+
+  <p>
+    A special version of <tt>key()</tt> is the <tt>pair()</tt> option,
+    with which one can add any value (where the value can be specified
+    as a template, with all the bells and whistles that supports:
+    macros, template functions and the rest) under pretty much any
+    name - but unlike the value, the name is a string, not a template.
+  </p>
+
+  <p>
+    Armed with this knowledge, we can control very well what gets sent
+    to the database in the end. Let us see an example!
+  </p>
+
+  <p>
+    Lets suppose we have a very verbose, horribly overstructured JSON
+    input, which we parse with the JSON parser, and want to log the
+    useful parts of it to MongoDB. This source of ours would look
+    somewhat like this:
+  </p>
+
+  <pre class="prettyprint lang-js">{ "DATE": "2012-04-26 14:19:20",
+  "SOURCE": {
+    "HOST": "localhost",
+    "IFACE": "lo",
+    "PROGRAM": {
+      "NAME": "test-program",
+      "PID": 1234
+    },
+    "CREDENTIALS": {
+      "UID": 1000,
+      "GID": 1000
+    },
+  },
+  "FACILITY": "user",
+  "PRIORITY": "info",
+  "MESSAGE": "this is a test message!",
+  "META": {
+    "GENERATED_BY": "test-program v1.0",
+    "ADVERTISEMENT": "This log message was brought to you by test-program v1.0 enterprise",
+    "COPYRIGHT": "(C) 2012 BigBadCompany",
+    "LICENSE": "WTFPL 1.0"
+  }
+}</pre>
+
+
+  <p>
+    This obviously has useful parts, but we don't want to keep the
+    same structure, nor all parts of it. So lets say we want some
+    standard stuff, like
+    the <em>DATE</em>, <em>HOST</em>, <em>PROGRAM</em>, <em>PID</em>,
+    <em>FACILITY</em>, <em>PRIORITY</em> and <em>MESSAGE</em> fields
+    only, and not the rest, and all of these on the top level. How
+    would we do that with value-pairs?
+  </p>
+
+  <p>
+    We'll start with an empty scope, and build from there:
+  </p>
+
+  <pre>value-pairs(
+  key("DATE") key("FACILITY") key("PRIORITY") key("MESSAGE")
+  pair("HOST" "${SOURCE.HOST}")
+  pair("PROGRAM" "${SOURCE.PROGRAM.NAME}")
+  pair("PID" "$(SOURCE.PROGRAM.PID}")
+)</pre>
+
+  <p>
+    And that's about it! It's important to keep in mind, that
+    explicitly defining a <tt>pair()</tt> with a custom value will
+    overwrite the value of the given key if it existed before. This
+    can be used to override fields of the default scope, for example.
+  </p>
+
+  <p>
+    Now lets say we want to add the <em>META</em> too, but not the
+    advertisement. This only needs one more line added to the
+    <tt>value-pairs()</tt> block above:
+  </p>
+
+  <pre>key("META.*") exclude("META.ADVERTISEMENT")</pre>
+
+  <p>
+    Now, if we wanted to add the credentials info too, we'd soon start
+    to wonder: isn't there an easier way to do that? Must I list all
+    these keys explicitly?
+  </p>
+
+  <h3>Transformations<hr></h3>
+
+  <p>
+    This is where transformations come in: a very powerful feature in
+    syslog-ng 3.4, with which one can apply any number of
+    transformations to key names: we can shift the key to the right,
+    we can add prefixes, or replace a string prefix with another.
+  </p>
+
+  <p>
+    Without much further ado, let me show an example that will transform
+    the above structure into this:
+  </p>
+
+  <pre class="prettyprint lang-js">{ "DATE": "2012-04-26 14:19:20",
+  "HOST": "localhost",
+  "PROGRAM": "test-program",
+  "PID": 1234
+  "CREDENTIALS": {
+    "UID": 1000,
+    "GID": 1000
+  },
+  "FACILITY": "user",
+  "PRIORITY": "info",
+  "MESSAGE": "this is a test message!",
+  "META": {
+    "GENERATED_BY": "test-program v1.0",
+    "COPYRIGHT": "(C) 2012 BigBadCompany",
+    "LICENSE": "WTFPL 1.0"
+  }
+}</pre>
+
+  <p>
+    And the magic value-pairs invocation to do this:
+  </p>
+
+  <pre>value-pairs(
+  key("DATE") key("FACILITY") key("PRIORITY") key("MESSAGE")
+  key("SOURCE.*" rekey(shift(7)))
+  exclude("PROGRAM.*")
+  pair("PROGRAM" "${SOURCE.PROGRAM.NAME}")
+  pair("PID" "${SOURCE.PROGRAM.PID}")
+  key("META.*") exclude("META.ADVERTISEMENT")
+)</pre>
+
+  <p>
+    Lets suppose we want to restructure things a bit, and
+    move <em>FACILITY</em> and <em>PRIORITY</em> under
+    the <em>syslog.</em>  prefix. Since those two are the only keys
+    that end with <tt>ITY</tt>, we can use a glob:
+  </p>
+
+  <pre>key("*ITY" rekey(add-prefix("syslog.")))</pre>
+
+  <p>
+    And to showcase the third available key transformer function, lets
+    say we want to replace <em>META</em> with <em>COPYRIGHT</em>! We
+    could do this with <tt>shift()</tt> and <tt>add-prefix()</tt>, but
+    there's a shortcut:
+  </p>
+
+  <pre>key("META.*" rekey(replace("META" "COPYRIGHT")))</pre>
+
+  <p>
+    You might wonder now, though, why transformations are useful, when
+    the dance we need to do to get things into shape (and still use
+    <tt>exclude()</tt> and <tt>pair()</tt> for <em>PROGRAM</em>
+    and <em>PID</em>!) is longer than if we listed keys by hand. Why,
+    then?
+  </p>
+
+  <p>
+    The reason is simple: transformations allow you to transform all
+    keys matching a glob, so if you receive a message where there are
+    more stuff under a key than what you thought of earlier, the
+    transformation will still catch it. If we extend the <em>META</em>
+    structure with a few more fields, and want to rename them all to
+    <em>COPYRIGHT</em>, with transformations, that's doable - with
+    explicitly listing keys, not so much.
+  </p>
+
+  <h2>Conclusions<hr></h2>
+
+  <p>
+    And with the above, we pretty much covered everything that's
+    possible with the MongoDB destination and value-pairs. Have fun,
+    and happy logging!
+  </p>
+</section>
