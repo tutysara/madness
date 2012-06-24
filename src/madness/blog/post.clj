@@ -2,6 +2,7 @@
   (:require [net.cgrand.enlive-html :as h]
             [madness.blog.nav :as blog-nav]
             [madness.utils :as utils]
+            [madness.config :as cfg]
             [clojure.string :as str]
             [clj-time.format :as time-format]))
 
@@ -34,11 +35,11 @@
      :comments (-> (first (h/select post [:article])) :attrs :comments enabled?),
      :content (h/select post [:section])}))
 
-(h/defsnippet blog-post-title "templates/asylum3-main.html" [:.hero-unit :h1]
+(h/defsnippet blog-post-title (cfg/template) [:.hero-unit :h1]
   [title]
   [:h1] (h/content title))
 
-(h/defsnippet blog-post-tag "templates/asylum3-main.html" [:#full-article-footer :a]
+(h/defsnippet blog-post-tag (cfg/template) [:#full-article-footer :a]
   [tag]
 
   [:a] (h/set-attr :href (utils/tag-to-url tag))
@@ -46,7 +47,7 @@
         (h/content tag)
         (h/after " ")))
 
-(h/defsnippet blog-post-footer "templates/asylum3-main.html" [:#full-article-footer]
+(h/defsnippet blog-post-footer (cfg/template) [:#full-article-footer]
   [post]
 
   [:a] (h/clone-for [tag (:tags post)]
@@ -56,7 +57,7 @@
                  (h/remove-attr :id))
   [:#full-article-footer] (h/remove-attr :id))
 
-(h/deftemplate blog-post "templates/asylum3-main.html"
+(h/deftemplate blog-post (cfg/template)
   [post all-posts]
 
   [:title] (h/content (:title post) " - Asylum")
