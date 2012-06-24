@@ -32,6 +32,11 @@
   [title]
   [:h1] (h/content title))
 
+(h/defsnippet blog-page-disqus (cfg/template) [:#disqus]
+  [page]
+
+  [:#disqus] (when (:comments page) identity))
+
 (h/deftemplate blog-page (cfg/template)
   [page all-posts]
 
@@ -41,6 +46,7 @@
   [:#post-neighbours] nil
   [:.hero-unit] (h/do->
                  (h/content (blog-page-title (:title page))
-                            (:content page)))
+                            (:content page)
+                            (blog-page-disqus page)))
   [:#nav-recent-posts :ul :li] (blog-nav/recent-posts all-posts)
   [:#nav-tags :ul :li] (blog-nav/all-tags all-posts))

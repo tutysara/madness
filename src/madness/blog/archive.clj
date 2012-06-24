@@ -56,8 +56,12 @@
                   (h/substitute (recent-post-footer p))
                   (h/set-attr :class (str "span"
                                           (cfg/recent-posts :span)))))
-  [:#recent-posts] (h/remove-attr :id)
-  [:#recent-posts-footer] (h/remove-attr :id))
+  [:#recent-posts] (h/do->
+                    (h/remove-class "visible-desktop")
+                    (h/remove-attr :id))
+  [:#recent-posts-footer] (h/do->
+                           (h/remove-class "visible-desktop")
+                           (h/remove-attr :id)))
 
 (h/defsnippet archive-post-item (cfg/template) [:#archive-post]
   [post]
@@ -87,6 +91,7 @@
   [:#hero-full] nil
   [:#full-article-footer] nil
   [:#post-neighbours] nil
+  [:#disqus] nil
   [:#archive] (h/substitute
                (archive-posts (drop (dec (cfg/recent-posts :total)) blog-posts)))
   [:#recents]
