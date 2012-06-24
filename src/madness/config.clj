@@ -18,4 +18,5 @@
 (defn dirs [role]
   (cond
    (= role :posts) (or (-> config :dirs :posts) "resources/posts")
+   (= role :pages) (or (-> config :dirs :pages) "resources/pages")
    (= role :output) (or (-> config :dirs :output) "public/")))

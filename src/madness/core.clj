@@ -4,10 +4,12 @@
             [madness.blog.index :as blog-index]
             [madness.blog.archive :as blog-archive]
             [madness.blog.post :as blog-post]
+            [madness.blog.page :as blog-page]
             [madness.blog.atom :as blog-feed]
             [madness.utils :as utils]))
 
 (def blog-posts (blog/load-posts))
+(def blog-pages (blog/load-pages))
 
 (defn- render-post
   [all-posts post]
@@ -15,6 +17,13 @@
   (let [fn (str "." (:url post) "index.html")]
     (io/write-out-dir fn
                       (apply str (blog-post/blog-post post all-posts)))))
+
+(defn- render-page
+  [all-posts page]
+
+  (let [fn (str "." (:url page))]
+    (io/write-out-dir fn
+                      (apply str (blog-page/blog-page page all-posts)))))
 
 (defn- render-archive
   [all-posts tag tagged-posts]
@@ -25,7 +34,7 @@
                                   all-posts tagged-posts)))))
 
 (defn -main
-  ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed"))
+  ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed" ":pages"))
   ([& args]
 
   (when (some #(= ":index" %1) args)
@@ -45,6 +54,10 @@
   (when (some #(= ":posts" %1) args)
     (dorun (map (partial render-post blog-posts)
                 blog-posts)))
+
+  (when (some #(= ":pages" %1) args)
+    (dorun (map (partial render-page blog-posts)
+                blog-pages)))
 
   (when (some #(= ":main-feed" %1) args)
     (io/write-out-dir "atom.xml"

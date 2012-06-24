@@ -1,10 +1,11 @@
 (ns madness.blog
   (:require [madness.blog.post :as blog-post]
+            [madness.blog.page :as blog-page]
             [madness.config :as cfg])
   (:import (java.io File)
            (org.apache.commons.io FileUtils FilenameUtils)))
 
-(defn- list-files [dir]
+(defn list-files [dir]
   (let [d (File. dir)]
     (if (.isDirectory d)
       (sort #(compare %2 %1)
@@ -14,3 +15,8 @@
   []
 
   (map blog-post/read-post (list-files (cfg/dirs :posts))))
+
+(defn load-pages
+  []
+
+  (map blog-page/read-page (list-files (cfg/dirs :pages))))
