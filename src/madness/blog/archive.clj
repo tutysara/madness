@@ -45,27 +45,34 @@
   [posts]
 
   [:#recents] (h/remove-attr :id)
-  [:#recent-posts :.recent-post] (h/clone-for [p posts]
-                                              (h/substitute (recent-post-item p)))
-  [:#recent-posts-footer :.recent-post-footer] (h/clone-for [p posts]
-                                                            (h/substitute (recent-post-footer p)))
+  [:#recent-posts :.recent-post]
+    (h/clone-for [p posts]
+                 (h/do->
+                  (h/substitute (recent-post-item p))
+                  (h/set-attr :class (str "span" (cfg/archive-posts :span)))))
+  [:#recent-posts-footer :.recent-post-footer]
+    (h/clone-for [p posts]
+                 (h/do->
+                  (h/substitute (recent-post-footer p))
+                  (h/set-attr :class (str "span"
+                                          (cfg/archive-posts :span)))))
   [:#recent-posts] (h/remove-attr :id)
   [:#recent-posts-footer] (h/remove-attr :id))
 
-(defn- make-rows [n blog-posts]
+(defn- make-rows [blog-posts]
   (loop [posts blog-posts
          result []]
     (if (empty? posts)
       result
-      (recur (drop (cfg/recent-posts :columns) posts)
-             (conj result (take (cfg/recent-posts :columns) posts))))))
+      (recur (drop (cfg/archive-posts :columns) posts)
+             (conj result (take (cfg/archive-posts :columns) posts))))))
 
 (h/deftemplate blog-archive (cfg/template)
   [all-posts blog-posts]
 
   [:.hero-unit] nil
   [:#recents]
-    (h/clone-for [rows (make-rows (cfg/recent-posts :rows) blog-posts)]
+    (h/clone-for [rows (make-rows blog-posts)]
                  (h/do->
                   (h/substitute (recent-post-row rows))
                   (h/before [{:tag :hr}])))

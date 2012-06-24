@@ -45,10 +45,17 @@
   [posts]
 
   [:#recents] (h/remove-attr :id)
-  [:#recent-posts :.recent-post] (h/clone-for [p posts]
-                                              (h/substitute (recent-post-item p)))
-  [:#recent-posts-footer :.recent-post-footer] (h/clone-for [p posts]
-                                                            (h/substitute (recent-post-footer p)))
+  [:#recent-posts :.recent-post]
+    (h/clone-for [p posts]
+                 (h/do->
+                  (h/substitute (recent-post-item p))
+                  (h/set-attr :class (str "span" (cfg/recent-posts :span)))))
+  [:#recent-posts-footer :.recent-post-footer]
+    (h/clone-for [p posts]
+                 (h/do->
+                  (h/substitute (recent-post-footer p))
+                  (h/set-attr :class (str "span"
+                                          (cfg/recent-posts :span)))))
   [:#recent-posts] (h/remove-attr :id)
   [:#recent-posts-footer] (h/remove-attr :id))
 
