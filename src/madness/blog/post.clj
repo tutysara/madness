@@ -73,6 +73,11 @@
                    identity)
   [:#post-neighbours] (h/remove-attr :id))
 
+(h/defsnippet blog-post-disqus (cfg/template) [:#disqus]
+  [post]
+
+  [:#disqus] (when (:comments post) identity))
+
 (h/deftemplate blog-post (cfg/template)
   [post all-posts]
 
@@ -83,7 +88,8 @@
                  (h/content (blog-post-title (:title post))
                             (:summary post)
                             (:content post)
-                            (blog-post-footer post)))
+                            (blog-post-footer post)
+                            (blog-post-disqus post)))
   [:#post-neighbours] (h/substitute (blog-post-neighbours (utils/neighbours all-posts post)))
   [:#nav-recent-posts :ul :li] (blog-nav/recent-posts all-posts)
   [:#nav-tags :ul :li] (blog-nav/all-tags all-posts))

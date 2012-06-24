@@ -91,6 +91,7 @@
   [:#hero-full] nil
   [:#full-article-footer] nil
   [:#post-neighbours] nil
+  [:#disqus] nil
   [:#archive] (h/substitute
                (archive-posts (drop (dec (cfg/recent-posts :total)) blog-posts)))
   [:#recents]
