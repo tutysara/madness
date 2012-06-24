@@ -1,0 +1,130 @@
+<article comments="1">
+  <title>MongoDB destination for syslog-ng</title>
+</article>
+
+<section>
+  <p>
+    For reasons
+    explained <a href="/blog/2010/12/30/logging-mongodb-syslog-ng/">elsewhere</a>,
+    I wrote a <a href="http://www.mongodb.org/">MongoDB</a>
+    destination driver
+    for <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system">syslog-ng</a>. Since
+    it changed since I posted
+    that <a href="/blog/2010/12/30/logging-mongodb-syslog-ng/">article</a>,
+    and updating that constantly, or posting new entries would be
+    counter intuitive, I decided to make a project page for it
+    instead.
+  </p>
+
+  <h2>Obtaining<hr></h2>
+
+  <p>
+    The afmongodb driver has been merged into the
+    official <a href="https://github.com/balabit/syslog-ng-3.3">syslog-ng
+    3.3</a> tree.
+  </p>
+
+  <h2>Features<hr></h2>
+
+  <p>
+    Apart from being able to connect to MongoDB and do what is
+    expected: send messages, the driver has the following features:
+  </p>
+
+  <ul>
+    <li> Does not log empty keys </li>
+    <li> The key-value pairs to log are fully configurable </li>
+    <li> Supports logging all dynamic variables, without the need to
+      list them all </li>
+    <li> Sane defaults, working right out of the box! </li>
+  </ul>
+
+  <h2>Configuration<hr></h2>
+
+  <p>
+    For the most simple case, when running a local mongodb server, one
+    only has to enable the driver:
+  </p>
+
+  <pre>destination d_mongodb {
+  mongodb();
+};</pre>
+
+  <p>
+    The configuration is reasonably well documented in the syslog-ng
+    <a href="http://www.balabit.com/sites/default/files/documents/syslog-ng-ose-3.3-guides/syslog-ng-ose-v3.3-guide-admin-en.html/bk01-toc.html">admin
+    guide</a>: the mongodb driver specifics
+    in <a href="http://www.balabit.com/sites/default/files/documents/syslog-ng-ose-3.3-guides/syslog-ng-ose-v3.3-guide-admin-en.html/reference_destination_mongodb.html">one
+    section</a>, the value-pairs syntax
+    in <a href="http://www.balabit.com/sites/default/files/documents/syslog-ng-ose-3.3-guides/syslog-ng-ose-v3.3-guide-admin-en.html/concepts-value-pairs.html">another</a>.
+  </p>
+
+  <p>
+    I have also written
+    a <a href="/blog/2012/04/26/mongodb-howto/">HOWTO</a> that
+    explores the possibilities of <tt>value-pairs()</tt>, with tips,
+    tricks and examples.
+  </p>
+
+  <h2>Structuring<hr></h2>
+
+  <p>
+    Since I started talking about structuring messages, lets explore
+    that a little bit more! With MongoDB being schema-free, we can
+    structure our documents, the log messages in a much more elegant
+    and straightforward way than with any other destination driver to
+    this date. What do I mean by that? We can put information that
+    belongs together, together. Let me illustrate this with an
+    example:
+  </p>
+
+  <pre class="prettyprint lang-js">{ "_id" : ObjectId("4d236e339d864e5600000002"),
+  "DATE" : "Jan  4 20:00:03",
+  "classifier" : {
+    "class" : "system",
+    "rule_id" : "4dd5a329-da83-4876-a431-ddcb59c2858c"
+  },
+  "secevt" : { "verdict" : "ACCEPT" },
+  "usracct" : {
+    "application" : "sshd",
+    "authmethod" : "publickey",
+    "device" : "::1",
+    "service" : "ssh2",
+    "sessionid" : "10070",
+    "type" : "login",
+    "username" : "algernon"
+  }
+  "HOST" : "localhost",
+  "FACILITY" : "auth", "PRIORITY" : "info",
+  "MESSAGE" : "Accepted publickey for algernon from ::1 port 33495 ssh2",
+  "PROGRAM" : "sshd", "PID" : "10070"
+}</pre>
+
+  <p>
+    Well structured, yet, still easily queryable.
+  </p>
+
+  <p>
+    The above can be achieved with the default settings, and the
+    structure is fully customisable with the use
+    of <tt>value-pairs()</tt>!
+  </p>
+
+  <h2>Notes<hr></h2>
+
+  <p>
+    The driver does not - and will not - support creating indexes, as
+    that can be a very complex operation in MongoDB (think compound
+    indexes), so it is left up to the administrator to make sure
+    indexes exist on all their collections.
+  </p>
+
+  <h2>Demo</h2>
+
+  <p>
+    A simple demonstration that showcases the power of the driver can
+    be viewed on
+    the <a href="http://mojology.madhouse-project.org/">mojology</a>
+    demo site.
+  </p>
+</section>
