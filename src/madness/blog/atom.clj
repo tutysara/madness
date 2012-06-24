@@ -1,34 +1,44 @@
 (ns madness.blog.atom
-  (:require [hiccup.core :as hicc]
-            [hiccup.util :as hicc-util]
+  (:require [clj-time.format :as time-format]
+            [clj-time.local :as time-local]
             [net.cgrand.enlive-html :as h]
             [madness.config :as cfg]))
 
+(def atom-date-formatter (time-format/formatter "yyyy-MM-dd'T'HH:mm:ssZZ"))
 
 (h/deftemplate bare-post "templates/empty.html"
   [post]
 
   [:html] (h/substitute (:summary post) (:content post)))
 
+(h/defsnippet atom-post (cfg/template :atom) [:entry]
+  [site-base post]
+
+  [:title] (h/content (:title post))
+  [:link] (h/set-attr :href (str site-base (:url post)))
+  [:updated] (h/content (time-format/unparse
+                         atom-date-formatter (time-local/to-local-date-time (:date post))))
+  [:id] (h/content (str site-base (:url post)))
+  [:content] (h/content (apply str (bare-post post))))
+
+(h/deftemplate atom-feed (cfg/template :atom)
+  [title uri site-base posts]
+
+  [:feed :title] (h/content title)
+  [:feed] (h/set-attr :xmlns "http://www.w3.org/2005/Atom")
+  [:#self] (h/do->
+            (h/remove-attr :id)
+            (h/set-attr :href (str site-base uri "atom.xml")))
+  [:#base] (h/do->
+            (h/remove-attr :id)
+            (h/set-attr :href (str site-base uri)))
+  [:feed :id]
+    (h/content (str site-base uri))
+  [:updated] (h/content (time-format/unparse atom-date-formatter (time-local/local-now)))
+  [:entry] (h/clone-for [p posts]
+                        (h/substitute (atom-post site-base p))))
+
 (defn emit-atom
-  [blog-posts]
+  [title uri posts]
 
-  (hicc/html
-   "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-   [:feed {:xmlns "http://www.w3.org/2005/Atom"}
-    [:title "asdf"]
-    ;[:link {:href (str (:base site) "/atom.xml"), :rel "self"}]
-    ;[:link {:href (:base site)}]
-    ;[:updated (conv/date->xml-schema (:date site))]
-    ;[:id (:base site)]
-    [:author [:name "BLAH"]]
-
-    (for [post (take 2 blog-posts)]
-      [:entry
-       [:title (:title post)]
-       ;[:link  (str (:base site) (:url post))]
-       ;[:updated (conv/date->xml-schema (:date post))]
-       ;[:id (str (:base site) (:url post))]
-       [:content {:type "html"}
-        (hicc-util/escape-html (apply str (bare-post post)))
-        ]])]))
+  (apply str (atom-feed title uri (cfg/atom-feed :base-url) posts)))

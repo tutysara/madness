@@ -15,7 +15,7 @@
 (defn date-format
   [date]
 
-  (time-format/unparse (time-format/formatter "YYYY-MM-dd") date))
+  (time-format/unparse (time-format/formatter "yyyy-MM-dd") date))
 
 (defn post-tagged?
   [post tag]

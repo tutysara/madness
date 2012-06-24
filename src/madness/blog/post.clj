@@ -14,12 +14,12 @@
     true))
 
 (def blog-date-format ^{:private true}
-  (time-format/formatter "YYYY-MM-dd HH:mm"))
+  (time-format/formatter "yyyy-MM-dd HH:mm"))
 
 (defn- post-url
   [date fn]
 
-  (str "/blog/" (time-format/unparse (time-format/formatter "YYYY/MM/dd") date)
+  (str "/blog/" (time-format/unparse (time-format/formatter "yyyy/MM/dd") date)
        "/" (second (first (re-seq #"....-..-..-(.*).html" fn))) "/"))
 
 (defn read-post
