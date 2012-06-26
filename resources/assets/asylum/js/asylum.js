@@ -1,4 +1,5 @@
 $(document).ready(function () {
   prettyPrint();
-  $("*[rel=tooltip]").tooltip();
+  $(".row-fluid *[rel=tooltip]").tooltip();
+  $("nav *[rel=tooltip]").tooltip({placement: "bottom"});
 });
