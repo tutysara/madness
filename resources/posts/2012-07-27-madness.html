@@ -1,0 +1,130 @@
+<article comments="1">
+  <title>Madness!</title>
+  <date>2012-06-27 23:50</date>
+  <tags>
+    <tag>News</tag>
+    <tag>Technology</tag>
+    <tag>Clojure</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    This site has a long history. It started out as a database-driven,
+    dynamic thing, based on Django + Zinnia, then
+    it <a href="/blog/2011/08/20/site-updates/">turned into</a> an
+    <a href="http://octopress.org/">Octopress</a>-powered statically
+    generated site.
+  </p>
+
+  <p>
+    Today, I switch again. Today, I praise the power
+    of <a href="https://github.com/cgrand/enlive/">Enlive</a>,
+    <a href="http://twitter.github.com/bootstrap/">Bootstrap</a>,
+    and <a href="http://clojure.org/">Clojure</a>, for they made it
+    possible for me to move on.
+  </p>
+</summary>
+
+<section>
+  <p>
+    There always were annoying little things that bothered me about
+    Octopress: from the language, through the complex and fragile
+    update mechanism, to the silly source layout. Whenever I tried to
+    update, or pull a plugin or extension in, I had to fight with the
+    system. I don't like fighting the system.
+  </p>
+
+  <p>
+    I like simple things. Simple things, that
+    allow <strong>me</strong> to control them as I see fit, and don't
+    try to shoehorn me into doing things their way.
+  </p>
+
+  <h2>Why would I have to copy the theme?</h2>
+
+  <p>
+    One part I did not understand about Octopress, is why the complex
+    theme & style update mechanism? It's in version control already!
+    How about I create a branch, change the theme as I see fit, and
+    then merge if I want to update? Would that be so hard?
+    No. Granted, that only supports a single theme within a branch,
+    but I can live with that.
+  </p>
+
+  <h2>Why do I have to learn a new templating language?</h2>
+
+  <p>
+    There's a very wide-spread markup language out there, it is
+    called <abbr title="Hypertext Markup Language">HTML</abbr>. When I
+    want a new theme, I want to write HTML. I do not want any fancy
+    extra moustaches there, nor any other non-sense. I want to be able
+    to preview the theme just by loading a single file into my browser
+    (of course, with the CSS and everything too).
+  </p>
+
+  <h2>What did I do about it?</h2>
+
+  <p>
+    I ended up ditching Octopress (yay, no more Ruby on my systems!),
+    and wrote my own static site generator. I looked around at first,
+    to see if I can find one that matches my needs:
+  </p>
+
+  <ul>
+    <li> Written in a sane language (Perl, Python, Clojure) </li>
+    <li> Simple: the theme is simple HTML/CSS (Less & SASS are ok),
+    and nothing else </li>
+    <li> It supports usable archives and feeds: whole site and per-tag
+    alike </li>
+    <li> Simple configuration: whatever can be in the template, should
+    be in the template. I like my configs minimal. </li>
+  </ul>
+
+  <p>
+    Not many requirements, right? But none of the static site
+    generators I looked at were able to fulfill all these needs. So, I
+    went ahead and wrote my own, that does all of the above.
+  </p>
+
+  <p>
+    While doing so, I learned to
+    love <a href="https://github.com/cgrand/enlive">Enlive</a>,
+    because it's insanely powerful. This whole site here is made up of
+    two template files: one for the HTML, another for the Atom
+    feeds. And that's it. With Enlive, I pull in snippets from the
+    template, fill in placeholders, clone & repeat parts of it, and
+    transform it into this site. It is actually quite simple, the
+    whole code is about 600 lines of code, but once I'm happy with the
+    feature set, I will do a refactor round and trim it down a little,
+    most probably.
+  </p>
+
+  <p>
+    I learned to
+    love <a href="http://twitter.github.com/bootstrap/">Bootstrap</a>,
+    because it made it so much easier to design the look, and have a
+    flexible, responsive layout, that - as far as I could test - works
+    much better on smartphones than my old site did!
+  </p>
+
+  <p>
+    I already loved <a href="http://clojure.org/">Clojure</a>, but now
+    I love it even more. It was a very interesting, and challenging
+    experiment to build a static site generator in a functional
+    language. But in the end, composing parts turned out to be a great
+    tool.
+  </p>
+
+  <p>
+    Once cleaned up a little, the code of Madness and this theme will
+    all be available at a neighborhood git repository. For now, it's a
+    bit of a mess, because I was still learning my way around. You do
+    not want to see the code in its current form. Though, those
+    interested, will be able to, as it's part of the git history.
+  </p>
+
+  <p>
+    Soon! Madness will consume you. <em>*cackles madly*</em>
+  </p>
+</section>
