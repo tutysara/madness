@@ -15,6 +15,7 @@
   [:h2] (h/add-class "archived")
   [:h2 :a] (h/do->
             (h/content " " (:title post))
+            (h/set-attr :title (:title post))
             (h/set-attr :href (:url post)))
   [:.recent-post-footer] nil
   [:p.summary] nil)
@@ -54,6 +55,6 @@
                                      (drop (dec (cfg/recent-posts :total)) blog-posts))]
                            (h/do->
                             (h/substitute (archive-post-row archive))
-                            (h/before [{:tag :hr}])))
+                            (h/before utils/hr-desktop)))
   [:#nav-recent-posts :ul :li] (blog-nav/recent-posts all-posts)
   [:#nav-tags :ul :li] (blog-nav/all-tags all-posts))
