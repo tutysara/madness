@@ -2,6 +2,7 @@
   (:require [clj-time.format :as time-format]
             [clj-time.local :as time-local]
             [net.cgrand.enlive-html :as h]
+            [clojure.string :as str]
             [madness.config :as cfg]))
 
 (def atom-date-formatter (time-format/formatter "yyyy-MM-dd'T'HH:mm:ssZZ"))
@@ -10,6 +11,12 @@
   [post]
 
   [:html] (h/substitute (:summary post) (:content post)))
+
+(defn local-href-expand
+  [feed]
+
+  (str/replace feed #"href=\"(/[^\"]*)\""
+               (str "href=\"" (cfg/atom-feed :base-url) "$1\"")))
 
 (h/defsnippet atom-post (cfg/template :atom) [:entry]
   [site-base post]
@@ -41,4 +48,5 @@
 (defn emit-atom
   [title uri posts]
 
-  (apply str (atom-feed title uri (cfg/atom-feed :base-url) posts)))
+  (local-href-expand (apply str (atom-feed title uri
+                                           (cfg/atom-feed :base-url) posts))))
