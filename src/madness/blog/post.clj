@@ -37,7 +37,9 @@
 
 (h/defsnippet blog-post-title (cfg/template) [:.hero-unit :h1]
   [title]
-  [:h1] (h/content title))
+  [:h1] (h/do->
+         (h/content title)
+         (h/set-attr :title title)))
 
 (h/defsnippet blog-post-tag (cfg/template) [:#full-article-footer :a]
   [tag]
