@@ -27,8 +27,7 @@
   [:.hero-unit] (h/do->
                  (h/content (blog-post/blog-post-title (:title (first blog-posts)))
                             (:summary (first blog-posts))
-                            (index-read-on (first blog-posts)))
-                 (h/set-attr :title (:title (first blog-posts))))
+                            (index-read-on (first blog-posts))))
   [:#recents]
     (h/clone-for [rows (utils/blog->table
                         (cfg/recent-posts :columns)
