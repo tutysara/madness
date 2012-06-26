@@ -18,6 +18,12 @@
                               (recent-posts :rows)))
    (= setting :span) (int (/ 12 (recent-posts :columns)))))
 
+(defn archive-posts [setting]
+  (cond
+   (= setting :columns) (or (-> config :archive-posts :columns) 3)
+   (= setting :rows) (or (-> config :archive-posts :rows) 0)
+   (= setting :span) (int (/ 12 (archive-posts :columns)))))
+
 (defn dirs [role]
   (cond
    (= role :posts) (or (-> config :dirs :posts) "resources/posts")
