@@ -17,7 +17,7 @@
             (h/content " " (:title post))
             (h/set-attr :title (:title post))
             (h/set-attr :href (:url post)))
-  [:.recent-post-footer] nil
+  [:.post-footer] nil
   [:p.summary] nil)
 
 (h/defsnippet archive-post-row (cfg/template) [:#recents]
