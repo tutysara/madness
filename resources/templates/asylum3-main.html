@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Gergely Nagy">
 
-    <link href="/assets/bootstrap/css/bootstrap-simplex.min.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="/assets/bootstrap/css/font-awesome.css" rel="stylesheet">
     <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="/assets/gcp/prettify.css" type="text/css" rel="stylesheet">
@@ -59,12 +59,12 @@
       <div class="row-fluid">
         <div class="span10" id="content-area">
           <div class="hero-unit">
-            <h1>The latest article</h1>
+            <h1 title="The latest article">The latest article</h1>
 
             <p>This should be the summary of the latest article, a
             paragraph or two maybe.</p>
 
-            <p id="hero-full"><a class="btn btn-primary btn-large">Read on &raquo;</a></p>
+            <p id="hero-full"><a class="btn btn-success btn-large">Read on &raquo;</a></p>
 
             <div id="full-article-footer" class="row-fluid">
               <hr>
@@ -77,7 +77,7 @@
               </div>
             </div>
 
-            <div id="disqus">
+            <div id="disqus" class="visible-desktop">
               <div id="disqus_thread"></div>
               <script type="text/javascript">
                 var disqus_shortname = 'algernon';
@@ -113,7 +113,9 @@
           <div id="recents">
             <div class="row-fluid visible-desktop" id="recent-posts">
               <div class="span4 recent-post">
-                <h2>Title</h2>
+                <h2 class="post-header">
+                  <a href="#" class="icon-book">Title</a>
+                </h2>
 
                 <p class="summary">
                   Donec id elit non mi porta gravida at eget
@@ -122,17 +124,14 @@
                   amet risus. Etiam porta sem malesuada magna mollis
                   euismod. Donec sed odio dui.
                 </p>
-              </div>
-            </div>
 
-            <div class="row-fluid visible-desktop" id="recent-posts-footer">
-              <div class="span4 recent-post-footer">
-                <p class="row-fluid">
-                  <a class="btn btn-primary" href="/blog/2012/06/23/title/">Read on &raquo;</a>
-                  <span class="pull-right"><i class="icon-time"></i> <span>2012-06-23</span></span>
-                </p>
+                <div class="recent-post-footer visible-desktop">
+                  <a class="tag btn btn-info btn-mini" href="/blog/tags/tag"><i class="icon-tag"></i> <span>tag</span></a>
 
-                <a class="tag btn btn-info btn-mini" href="/blog/tags/tag"><i class="icon-tag"></i> <span>tag</span></a>
+                  <span class="pull-right">
+                    <i class="icon-time"></i> <span class="post-date">2012-06-23</span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>

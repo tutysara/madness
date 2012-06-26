@@ -1,20 +1,27 @@
 /* -*- mode: css -*- */
-@media (min-width: 768px) and (min-height: 700px) {
+body {
+        padding-top: 100px;
+        padding-bottom: 20px;
+}
+
+@media (max-width: 979px) {
         body {
-                padding-top: 60px;
-                padding-bottom: 40px;
+                padding-top: 0px;
+                padding-bottom: 0px;
         }
 }
 
 .sidebar-nav {
         padding: 9px 0;
 }
+
 .hero-unit h1 {
         margin-bottom: 0.5em;
+        line-height: 1.5;
 }
 
-.btn-info {
-        color: #222;
+.hero-unit {
+        padding: 30px;
 }
 
 .recent-post-footer a {
@@ -37,6 +44,21 @@
         margin-right: 1.5em;
 }
 
+/*
 .hero-unit .well {
         background: #eee;
+}
+*/
+
+.post-header {
+        border-bottom: 1px dashed #aaa;
+        margin-bottom: 0.25em;
+        white-space: nowrap;
+}
+
+.post-header, .hero-unit h1 {
+        overflow-y: visible;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
 }
