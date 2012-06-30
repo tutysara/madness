@@ -610,6 +610,7 @@ navbar>.well{padding:19px;}
 .hero-unit dl,.hero-unit ul,.hero-unit ol{margin-left:2em;}
 .hero-unit dl dt,.hero-unit dl dd{line-height:23px;}
 .hero-unit ul li,.hero-unit ol li{line-height:23px;}
+.hero-unit h2{margin-bottom:0.5em;}
 .hero-unit h1{font-size:32px;}
 .hero-unit p,.hero-unit dl,.hero-unit ul,.hero-unit ol,.hero-unit code{font-size:15px;line-height:23px;}
 @media (max-width:979px){.hero-unit{padding:10px;}}.pull-right{float:right;}
