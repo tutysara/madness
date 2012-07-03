@@ -1,0 +1,83 @@
+<article comments="1">
+  <title>syslog-ng on Solaris</title>
+  <date>2012-07-03 14:00</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>syslog-ng</tag>
+    <tag>Solaris</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    I have played
+    with <a href="http://www.oracle.com/us/products/servers-storage/solaris/solaris11/overview/index.html">Solaris</a>
+    a few times in the past, but it always ended up in disappointment,
+    after long and cruel battles with trying to get things into
+    shape. Compiling and
+    running <a href="http://www.balabit.com/network-security/syslog-ng/opensource-logging-system/overview">syslog-ng</a>
+    on this platform proved to be quite a challenge.
+  </p>
+
+  <p>
+    Today I gave it another try, and found
+    the <a href="http://www.opencsw.org/">OpenCSW</a> project, and
+    figured I'll try getting things up and running with the help of
+    these packages.
+  </p>
+</summary>
+
+<section>
+  <h2>Setting up the environment</h2>
+
+  <p>
+    First, I had to install an environment I'm comfortable with, all
+    the packages syslog-ng needs to build and run, and all the tools I
+    need to debug it.
+  </p>
+
+  <p>
+    We'll need a compiler, header files, git, and a whole lot of other
+    stuff syslog-ng depends on. With much further ado:
+  </p>
+
+  <pre># pkgadd -d http://get.opencsw.org/now
+# export PATH=/opt/csw/bin:$PATH
+# pkg install system/header
+# pkgutil -y -i vim git autoconf automake libtool gmake libglib2_dev \
+                eventlog_dev docbook libxslt docbookxsl libwrap_dev \
+                bison flex_new gcc4core pkgconfig libnet_dev gdb</pre>
+
+  <p>
+    This will install a reasonably modern environment, with most
+    everything I needed for the time being.
+  </p>
+
+  <h2>Getting & compiling syslog-ng</h2>
+
+  <p>
+    Armed with modern tools, it turns out, that compiling syslog-ng is
+    not such a big deal afterall!
+  </p>
+
+  <pre>$ git clone git://github.com/balabit/syslog-ng-3.3.git
+$ cd syslog-ng-3.3
+$ ./autogen.sh
+$ ./configure --prefix=/opt/syslog-ng \
+              LEX=/opt/csw/bin/flex-2.5.35
+$ gmake XSL_STYLESHEET=/opt/csw/share/sgml/docbook/xsl-stylesheets/manpages/docbook.xsl
+$ sudo gmake install</pre>
+
+  <p>
+    Ta-da! Up and running in no time whatsoever, not any more painful
+    than on any contemporary GNU/Linux distribution. No more hunting
+    dependencies and old packages on sunfreeware, no more compiling
+    lots of stuff by hand.
+  </p>
+
+  <p>
+    I was very pleasantly suprised that once adding
+    the <a href="http://www.opencsw.org/">OpenCSW</a> repository,
+    everything went smoothly.
+  </p>
+</section>
