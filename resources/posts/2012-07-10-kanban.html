@@ -1,0 +1,149 @@
+<article comments="1">
+  <title>Personal Kanban</title>
+  <date>2012-07-10 23:59</date>
+  <tags>
+    <tag>Technology</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    I have several terribly long TODO lists, and managing them in a
+    sane manner is becoming a very difficult problem. I worked in a
+    kanban-esque style in the past, and it wasn't all that bad (the
+    tool used for it was, though), so recently, partly triggered by a
+    <a href="https://twitter.com/athoshun/status/219134403853561856">tweet</a>
+    from a <a href="http://athos.blogs.balabit.com/">collegue</a> I
+    hold in high esteem, I started to look into using personal kanban.
+  </p>
+
+  <p>
+    However, I need a tool to help me, a real board doesn't work, for
+    a plethora of reasons.
+  </p>
+</summary>
+
+<section>
+  <h2>My use cases</h2>
+
+  <p>
+    I want something that I can use from everywhere where I can be
+    online, be that from home, from work, on vacation, en route to any
+    of those and whatever other strange location I may end up
+    at. There's quite a lot of overlap between my work and my hobbies,
+    so it makes a lot of sense to share the boards. Easily, of course.
+  </p>
+
+  <p>
+    For this reason, I need something that's online, something I can
+    access from anywhere. However, that is not all, not nearly. You
+    see, I'm a silly person who grew up on 80x25, and I absolutely
+    hate the mouse, can't stand fumbling with it aimlessly. It's not
+    my thing to push, pull and toss around my own kind.
+  </p>
+
+  <p>
+    So I need something that I can control reasonably well from the
+    command-line too, something that has a decent API. I need this for
+    setting up periodic tasks, that I want to complete each and every
+    day, like reading mail. Ideally, I'd have a task called <em>Daily
+    Routine</em>, with subtasks that include reading email, RSS feeds,
+    and so on and so forth. I'd repeat it and complete it each day. I
+    do not wish to manually set it up each time, nor do I want to drag
+    it back from <strong>done</strong> (what's done is done, and must
+    stay that way).
+  </p>
+
+  <p>
+    I also want to work offline, from time to time, and be able to
+    easily sync back.
+  </p>
+
+  <p>
+    I've been looking around, but none of the solutions I found
+    survived my requirements, unfortunately.
+  </p>
+
+  <h2>What I want, in short</h2>
+
+  <dl>
+    <dt> Online </dt>
+    <dd> I want to access it from anywhere, anytime </dd>
+
+    <dt> Usable from within a browser </dt>
+    <dd> I like good browser-based user interfaces, and being able to
+    use it from a browser means I don't need to install any special
+    client software if I don't want to. </dd>
+
+    <dt> A resonable API </dt>
+    <dd> I want to automate some tasks, like creating periodic
+    tasks. I don't want to use the web UI for this, nor do I require
+    that the software support all my silly requirements which can be
+    solved by simply having an API, and letting me do my stuff. </dd>
+
+    <dt> Offline mode </dt>
+    <dd> Sometimes I will be without connectivity, but still getting
+    things done, I want to have access to the <strong>full</strong>
+    software in this case too. This means, I need to be able to
+    install it locally. </dd>
+
+    <dt> Free software </dt>
+    <dd> If I have a choice, I will use free software. For everything
+    important, I refuse to use anything else but free software (hosted
+    stuff to mirror my things to is acceptable - but those are
+    mirrors). Managing my time is one of the most important
+    things. </dd>
+  </dl>
+
+  <h2>What will I do about it?</h2>
+
+  <p>
+    I looked around for days, but all of the possible candidates
+    failed at one or more of the requirements above. Sadly, I had to
+    conclude there's nothing that would satisfy my needs. And as with
+    everything that bugs me, I'll go and scratch the itch, and create
+    something that works for me.
+  </p>
+
+  <p>
+    I will have a little time off work, and go on vacation, which will
+    be a perfect time to sort out my todo/kanban needs, and develop
+    the tool I desire.
+  </p>
+
+  <p>
+    I plan to use git as the backend, to store tasks as directories,
+    with files inside that describe the subtasks - and an index file
+    for the main task itself. The daily repeating tasks would have a
+    date embedded in the task filename (which could be overridden from
+    the index itself). On that, I would build an API to handle the
+    creation, updating and moving of tasks, with support for tracking
+    time spent in various states, temporarily pausing the timer, and
+    so on and so forth.
+  </p>
+
+  <p>
+    Once those foundations are done, I'll build a straightforward and
+    easy web UI around it, and expose the API through a REST
+    interface.
+  </p>
+
+  <p>
+    And so far, that's all about it. In the longer run, I wish to make
+    it possible to share a read-only view of some of my boards via the
+    web. By design, collaboration is possible because the backend is
+    git - everyone would have their own web UI, and push/pull to a
+    common server. There are obvious shortcomings in a simple design
+    like that, like having to poke the command-line in case there's a
+    non-fast-forward merge situation, but I can live with that for
+    now.
+  </p>
+
+  <p>
+    Of course, the result will be released under the GPL, would anyone
+    else find this little hack useful. However, if one knows of any
+    solution that fulfills all my requirements above, don't hesitate
+    to tell me. Thanks!
+  </p>
+
+</section>
