@@ -44,10 +44,10 @@
 (h/defsnippet blog-post-tag (cfg/template) [:#full-article-footer :a]
   [tag]
 
-  [:a] (h/set-attr :href (utils/tag-to-url tag))
   [:a] (h/do->
-        (h/content tag)
-        (h/after " ")))
+        (h/set-attr :href (utils/tag-to-url tag))
+        (h/after " "))
+  [:a :span] (h/substitute tag))
 
 (h/defsnippet blog-post-footer (cfg/template) [:#full-article-footer]
   [post]
