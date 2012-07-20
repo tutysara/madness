@@ -1,6 +1,5 @@
 (ns madness.blog.index
   (:require [net.cgrand.enlive-html :as h]
-            [madness.blog.post :as blog-post]
             [madness.blog :as blog]
             [madness.blog.nav :as blog-nav]
             [madness.utils :as utils]
@@ -21,11 +20,19 @@
                  (h/content (utils/date-format (:date post)))
                  (h/remove-attr :id)))
 
+(h/defsnippet blog-index-first-title (cfg/template) [:.hero-unit :h1]
+  [post]
+
+  [:h1] (h/set-attr :title (:title post))
+  [:h1 :a] (h/do->
+            (h/content (:title post))
+            (h/set-attr :href (:url post))))
+
 (h/deftemplate blog-index (cfg/template)
   [blog-posts]
 
   [:.hero-unit] (h/do->
-                 (h/content (blog-post/blog-post-title (:title (first blog-posts)))
+                 (h/content (blog-index-first-title (first blog-posts))
                             (:summary (first blog-posts))
                             (index-read-on (first blog-posts))))
   [:#recents]
