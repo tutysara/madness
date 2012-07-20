@@ -37,7 +37,9 @@
 (h/deftemplate blog-archive (cfg/template)
   [title all-posts blog-posts]
 
-  [:.hero-unit :h1] (h/content title)
+  [:.hero-unit :h1] (h/do->
+                     (h/content title)
+                     (h/set-attr :title title))
   [:.hero-unit :p] nil
   [:#hero-full] nil
   [:#full-article-footer] nil

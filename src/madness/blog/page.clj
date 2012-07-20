@@ -30,7 +30,9 @@
 
 (h/defsnippet blog-page-title (cfg/template) [:.hero-unit :h1]
   [title]
-  [:h1] (h/content title))
+  [:h1] (h/do->
+         (h/content title)
+         (h/set-attr :title title)))
 
 (h/defsnippet blog-page-disqus (cfg/template) [:#disqus]
   [page]
