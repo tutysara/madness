@@ -1,0 +1,261 @@
+<article comments="1">
+  <title>syslog-ng and disk buffers</title>
+  <date>2012-07-20 12:20</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>syslog-ng</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    The commercial version
+    of <a href="http://www.balabit.com/network-security/syslog-ng">syslog-ng</a>,
+    called the <strong>Premium Edition</strong> offered support for
+    disk buffers for a long long time now. This is something that the
+    Open Source Edition is lacking even now, while there is a clear
+    demand for it, and competitors support something very similar
+    aswell.
+  </p>
+
+  <p>
+    While I won't go into the whys, let me explain a few ideas people
+    came up with to implement disk buffers, their shortcomings, and
+    plans currently in motion that will ease the task in the not too
+    distant future.
+  </p>
+</summary>
+
+<section>
+  <h2>The Goal</h2>
+
+  <p>
+    The goal we want to accomplish, is to have a reliable way of
+    storing messages that are still <em>in flight</em>, being
+    processed by syslog-ng, on disk. There are two reasons we'd like
+    to do this:
+
+    <ol>
+      <li>
+        To ensure that messages do not get lost, not even when
+        syslog-ng unexpectedly stops
+      </li>
+
+      <li>
+        To have a larger buffer for peaks, when storing all pending
+        messages in memory would be unfeasible.
+      </li>
+    </ol>
+  </p>
+
+  <h2>The problem</h2>
+
+  <p>
+    The main issue at hand is not only that syslog-ng OSE does not
+    have a disk buffer, but that it's very far from trivial to add
+    this feature to it. And that is because the message queue system
+    in OSE is not as extensible as it is in PE: you can't just hook in
+    a disk buffering system and live happily ever after.
+  </p>
+
+  <p>
+    Would that be the case, OSE would already have a disk buffer
+    solution, as coding up a simple one is about a day's worth of
+    work.
+  </p>
+
+  <h2>The workarounds</h2>
+
+  <h3>Use a buffer file!</h3>
+
+  <p>
+    One of the first things people think of is: "<em>What if I write
+    to a file, and use that as the source for another
+    destination?</em>". This could be as simple as:
+  </p>
+
+  <blockquote><pre>source s_network { tcp(flags(no-parse)); udp(flags(no-parse)); };
+destination d_buffer { file("/var/cache/syslog-ng/buffer.log"
+                       template("$MESSAGE\n")); };
+log { source(s_network); destination(d_buffer); };
+
+source s_buffer { file("/var/cache/syslog-ng/buffer.log"
+                       follow-freq(0.1)); };
+destination d_net { tcp("1.2.3.4"); };
+log { source(s_buffer); destination(d_net); };</pre></blockquote>
+
+  <p>
+    This has a few drawbacks, however.
+
+    <ul>
+      <li> The buffer will grow indefinitely. </li>
+      <li> The buffer will need to be frequently polled to keep latency low. </li>
+      <li> The configuration is far longer than one would want it to be. </li>
+    </ul>
+  </p>
+
+  <h3>Use a buffer file, with rotation!</h3>
+
+  <p>
+    To solve the issue of the file growing forever and ever, we could,
+    of course, rotate it away from time to time. But what would we
+    gain from that? Two new problems!
+  </p>
+
+  <p>
+    We still can't expire old files, not easily, not reliably anyway,
+    as we do not know which files have been fully consumed by
+    the <em>s_buffer</em> source.
+  </p>
+
+  <p>
+    And, we added extra complexity to the config, because we now have
+    a large number of buffer files, and we need to figure out when to
+    start polling new ones. If we use an external rotation mechanism,
+    we could SIGHUP syslog-ng after tweaking the config to use the new
+    file, but then we have a window where messages in the old buffer
+    haven't been processed yet.
+  </p>
+
+  <p>
+    Or we could use wildcard sources (once they're ported from PE to
+    OSE), which makes the following of buffer files easy:
+  </p>
+
+  <blockquote><pre>destination d_buffer { file("/var/cache/syslog-ng/buffer-${HOUR}.log"
+                            template("$MESSAGE\n")); };
+source s_buffer { file("/var/cache/syslog-ng/buffer-*.log"
+                       follow-freq(0.1)); };</pre></blockquote>
+
+  <p>
+    However, we still can't expire old files reliably, as we have no
+    way of knowing when a buffer was wholly consumed.
+  </p>
+
+  <h3>Lets parse <tt>syslog-ng.persist</tt>!</h3>
+
+  <p>
+    Thankfully for us, syslog-ng stores what position it is standing
+    at for all files it is using as a source. We just need a way to
+    get that out of the persist file. Sadly, no tool exists yet that
+    would allow us to do so.
+  </p>
+
+  <p>
+    Technically, if we could figure out the file position from the
+    persist file, and we'd have wildcard sources, implementing
+    disk-buffers would only take a couple of lines, and a cron job to
+    clean up old stuff: find all files that are read fully and are
+    older than a set limit, like, if it's twice as old as the rotation
+    interval, then it is a candidate for deletion.
+  </p>
+
+  <h2>Can we do better?</h2>
+
+  <p>
+    While the above solution will work nicely, that too, has a few
+    drawbacks: it's hacky, it needs longer configuration than one
+    would ideally want, and it needs an external tool to clean up old
+    buffer files. We can surely do better than that!
+  </p>
+
+  <p>
+    To do better, we need a way to extend - or replace - the queue
+    mechanism used within syslog-ng. Doing this properly is a hard
+    task, but most of it has been done already, it just needs to
+    migrate from PE to OSE - a question of time and energy, really. I
+    won't go into more details about this right now, as
+    it <strong>will</strong> happen, and as far as the disk queues are
+    concerned, it's not important to know how the queue
+    extending/replacing system works under the hood.
+  </p>
+
+  <p>
+    So, for a moment, lets imagine that we already have a pluggable
+    queue system, ok? We can completely replace the queues syslog-ng
+    uses internally.
+  </p>
+
+  <p>
+    Now, take a step back, and think about what we use the queue
+    system for: to pass messages around. Does that sound familiar? Of
+    course it does. Let's use a message queue then! Preferably one
+    that already supports disk buffering,
+    like <a href="http://www.rabbitmq.com//">RabbitMQ</a>.
+  </p>
+
+  <p>
+    If we'd replace syslog-ng's queue mechanism with such a queue
+    system, we wouldn't only gain disk buffers, but a host of other
+    interesting things too, but that is for a different post. For now,
+    lets see how a rabbitmq-based config would look like:
+  </p>
+
+  <blockquote><pre>options {
+  queue(rabbitmq);
+  rabbitmq(durable(yes)
+           delivery(persistent));
+};
+
+source s_net { tcp(); udp(); };
+destination d_net { tcp(); };
+log { source(s_net); destination(d_net); };</pre></blockquote>
+
+  <p>
+    And that's about it. "<em>Where's the disk queue size?</em>" - you
+    may ask, and rightfully so! Well, we replaced syslog-ng's internal
+    queue mechanism with rabbitmq, so <em>log_fifo_size()</em> is now
+    the number of messages a particular queue will hold. There's no
+    separate disk buffer size setting in this case, as that's entirely
+    handled by RabbitMQ.
+  </p>
+
+  <h3>When will we have all this?</h3>
+
+  <ul>
+    <li>
+      Wildcard source is already written, although it needs to be
+      ported (and potentially rewritten in the process) from PE to
+      OSE, it's entirely possible to get this done for syslog-ng 3.4.
+    </li>
+
+    <li>
+      A tool to inspect persist files has been requested multiple
+      times, but currently, there is no active effort on writing such
+      a tool - help is, of course, welcome in this area. Nevertheless,
+      implementing as much of this as we'd need for buffer file
+      rotation is likely a very easy task, and as such, can be done in
+      syslog-ng 3.4 too.
+    </li>
+
+    <li>
+      Extending the queue mechanism is available in PE, but I'd want
+      something more: to replace the whole queuing system. That's a
+      huge task, and it won't be coming soon. It is very unlikely that
+      I'll start working on this before 3.5 opens up for development.
+    </li>
+  </ul>
+
+  <p>
+    To put it otherwise, the slightly hackish, not so nice solution is
+    entirely possible to do within the scope of syslog-ng 3.4. The
+    most powerful solution, that also buys us a whole host of neat
+    things along with disk buffering, is something that will have to
+    wait.
+  </p>
+
+  <h3>Can we help?</h3>
+
+  <p>
+    Of course! If you have some experience writing C code, then a
+    persist file inspection tool likely won't be a huge challenge for
+    you - and I am always happy to help and give hints.
+  </p>
+
+  <p>
+    But even if you're not a coder-type, or simply lack the time,
+    expressing your interest, and showing support for our efforts of
+    making syslog-ng better and better is also greatly appreciated!
+  </p>
+
+</section>
