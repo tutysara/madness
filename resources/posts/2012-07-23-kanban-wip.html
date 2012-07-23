@@ -1,0 +1,112 @@
+<article comments="1">
+  <title>Kanban: Status report</title>
+  <date>2012-07-23 20:40</date>
+  <tags>
+    <tag>Technology</tag>
+    <tag>Kanban</tag>
+  </tags>
+</article>
+
+<summary>
+  <p>
+    I started working on the personal kanban application I
+    <a href="http://asylum.madhouse-project.org/blog/2012/07/10/kanban/">wrote
+    about earlier</a>, there have been a couple of changes regarding
+    the implementation, and a few mockups of the user interface are
+    ready to be showcased.
+  </p>
+</summary>
+
+<section>
+  <p>
+    One of the major shifts in design is that the application will not
+    be based on a git-backed storage. Instead, it will be built upon
+    a <a href="http://www.mongodb.com/">MongoDB</a>, and tools will be
+    provided to export, import and merge databases, making
+    disconnected work possible.
+
+    The way I imagine that, is that the application will have a
+    replay-able log of what happend, so merging will be as easy as
+    replaying the log. If conflicts arise, there'll be an API to ease
+    resolving them.
+  </p>
+
+  <p>
+    The goal is to have something that's easy to deploy either
+    locally, or on, say, <a href="http://www.heroku.com/">heroku</a>,
+    that's one of the reasons I dropped the idea of using git as the
+    storage backend. The other is that I found it unreasonably
+    complicated to work with git from Clojure. On the other
+    hand, <a href="http://clojuremongodb.info/">Monger</a> has been a
+    great pleasure to work with so far.
+  </p>
+
+  <p>
+    I have not written a single line of code yet, figuring I will
+    design the user interface first, at least roughly, so I will know
+    what APIs I will need to make it work. The results are below, but
+    keep in mind that these are a work in progress, and I'm not a
+    designer, nor an UX expert or anything.
+  </p>
+
+  <p>
+    <h2>Screenshots</h2>
+
+    <ul class="thumbnails">
+      <li class="span4">
+        <div class="thumbnail">
+          <a href="/assets/asylum/images/5ms-mocks/5ms-mockup-board.png">
+            <img src="/assets/asylum/images/5ms-mocks/5ms-mockup-board.360x268.png"
+                 alt="5ms - board mockup">
+          </a>
+          <h5>Kanban board mockup</h5>
+          <p>
+            This is the default view, with a global timer ticking on
+            the top. Some of the columns have limits, so they will
+            have a danger-bar aswell.
+          </p>
+        </div>
+      </li>
+      <li class="span4">
+        <div class="thumbnail">
+          <a href="/assets/asylum/images/5ms-mocks/5ms-mockup-warning.png">
+            <img src="/assets/asylum/images/5ms-mocks/5ms-mockup-warning.360x268.png"
+                 alt="5ms - warning mockup">
+          </a>
+          <h5>Notifications</h5>
+          <p>
+            Some important notifications are displayed on the bottom
+            (others may be displayed elsewhere, haven't decided that
+            yet), they stack, and allow click-through.
+          </p>
+        </div>
+      </li>
+      <li class="span4">
+        <div class="thumbnail">
+          <a href="/assets/asylum/images/5ms-mocks/5ms-mockup-add-task.png">
+            <img src="/assets/asylum/images/5ms-mocks/5ms-mockup-add-task.360x268.png"
+                 alt="5ms - mockup of adding a task">
+          </a>
+          <h5>Adding a task</h5>
+          <p>
+            Adding a task pops up a dialog, where one can fill out the
+            details. Editing a task will be similar, but will have a
+            comments tab aswell.
+          </p>
+        </div>
+      </li>
+    </ul>
+  </p>
+
+  <h2>What's next?</h2>
+
+  <p>
+    Now that I have a reasonably good idea on how I want the UI to
+    look like and behave (I even have a few ideas how to make it
+    small-screen friendly, but more on that later!), I'll spend the
+    next few days cooking up the backend. I'll have to learn to use
+    ClojureScript too, as there will be more code client-side than I
+    am willing to write in straight JavaScript.
+  </p>
+
+</section>
