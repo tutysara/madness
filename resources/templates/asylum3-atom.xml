@@ -10,7 +10,7 @@
   <author>
     <name><![CDATA[Gergely Nagy]]></name>
   </author>
-  <generator>Madness</generator>
+  <generator uri="https://github.com/algernon/madness">Madness</generator>
 
   <entry>
     <title type="html">Title of the post</title>
