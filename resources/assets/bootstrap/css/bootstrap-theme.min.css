@@ -618,3 +618,5 @@ navbar>.well{padding:19px;}
 .hide{display:none;}
 .show{display:block;}
 .invisible{visibility:hidden;}
+#sidebar .sidebar-nav{padding: 5px;}
+#sidebar .sidebar-nav .nav{padding-left: 5px;padding-right: 5px;}
