@@ -29,7 +29,7 @@
             (h/set-attr :href (:url post))))
 
 (h/deftemplate blog-index (cfg/template)
-  [blog-posts]
+  [blog-posts _]
 
   [:.hero-unit] (h/do->
                  (h/content (blog-index-first-title (first blog-posts))

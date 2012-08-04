@@ -35,7 +35,7 @@
 
 
 (h/deftemplate blog-archive (cfg/template)
-  [title all-posts blog-posts]
+  [title blog-posts all-posts]
 
   [:.hero-unit :h1] (h/do->
                      (h/content title)
