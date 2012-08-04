@@ -1,36 +1,59 @@
 (ns madness.config)
 
-(defonce config (eval (read-string (slurp "settings.clj"))))
+(defonce default-config
+  {:template {:default "default.html"
+              :atom "atom.xml"}
+   :dirs {:posts "resources/posts"
+          :pages "resources/pages"
+          :output "public/"}
+   :recent-posts {:columns 3
+                  :rows 2}
+   :archive-posts {:columns 3
+                   :rows 0}
+   :atom {:base-url "http://localhost"
+          :title nil}})
+
+(defonce config
+  (reduce
+   (fn [o, n]
+     (let [k (first n), vo (second o), vn (second n)]
+       (update-in o [k] merge vn)))
+   default-config
+   (eval (read-string (slurp "settings.clj")))))
 
 (defn template
-  ([] (str "templates/" (or (-> config :template :default) "default.html")))
+  [& id]
 
-  ([role]
-     (cond
-      (= role :default) (template)
-      (= role :atom) (str "templates/" (or (-> config :template :atom) "atom.xml")))))
+  (str "templates/" ((or (first id) :default) (:template config))))
 
-(defn recent-posts [setting]
-  (cond
-   (= setting :columns) (or (-> config :recent-posts :columns) 3)
-   (= setting :rows) (or (-> config :recent-posts :rows) 2)
-   (= setting :total) (inc (* (recent-posts :columns)
-                              (recent-posts :rows)))
-   (= setting :span) (int (/ 12 (recent-posts :columns)))))
+(defmulti recent-posts
+  identity)
 
-(defn archive-posts [setting]
-  (cond
-   (= setting :columns) (or (-> config :archive-posts :columns) 3)
-   (= setting :rows) (or (-> config :archive-posts :rows) 0)
-   (= setting :span) (int (/ 12 (archive-posts :columns)))))
+(defmethod recent-posts :default [setting]
+  (-> config :recent-posts setting))
 
-(defn dirs [role]
-  (cond
-   (= role :posts) (or (-> config :dirs :posts) "resources/posts")
-   (= role :pages) (or (-> config :dirs :pages) "resources/pages")
-   (= role :output) (or (-> config :dirs :output) "public/")))
+(defmethod recent-posts :total [_]
+  (inc (* (recent-posts :columns)
+          (recent-posts :rows))))
 
-(defn atom-feed [setting]
-  (cond
-   (= setting :base-url) (or (-> config :atom :base-url) "http://localhost")
-   (= setting :title) (-> config :atom :title)))
+(defmethod recent-posts :span [_]
+  (int (/ 12 (recent-posts :columns))))
+
+(defmulti archive-posts
+  identity)
+
+(defmethod archive-posts :default [setting]
+  (-> config :archive-posts setting))
+
+(defmethod archive-posts :span [_]
+  (int (/ 12 (archive-posts :columns))))
+
+(defn dirs
+  [role]
+
+  (-> config :dirs role))
+
+(defn atom-feed
+  [setting]
+
+  (-> config :atom setting))
