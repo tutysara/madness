@@ -8,3 +8,5 @@ templates, posts and pages look.
 
 At some point, as time allows, more documentation will be written. For
 now, use the source!
+
+ [1]: http://asylum.madhouse-project.org/
