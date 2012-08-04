@@ -45,12 +45,7 @@
 (def config
   "The final configuration for Madness - `settings.clj` merged into
   the `default-config`."
-  (reduce
-   (fn [o, n]
-     (let [k (first n), vo (second o), vn (second n)]
-       (update-in o [k] merge vn)))
-   default-config
-   (eval (read-string (slurp "settings.clj")))))
+  (merge-with merge default-config (eval (read-string (slurp "settings.clj")))))
 
 (defn template
   "Get the location of a template. Without arguments, returns the

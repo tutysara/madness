@@ -5,7 +5,7 @@
             :url "http://www.gnu.org/licenses/gpl.txt"
             :distribution :repo}
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.3.0"]
+  :dependencies [[org.clojure/clojure "1.4.0"]
                  [enlive/enlive "1.0.0"]
                  [clj-time "0.4.3"]
                  [org.clojars.amit/commons-io "1.4.0"]
