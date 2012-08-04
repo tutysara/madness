@@ -16,10 +16,9 @@
   [post]
 
   [:.recent-post] (h/remove-class "recent-post")
-  [:h2 :a] (h/do->
-            (h/content " " (:title post))
-            (h/set-attr :title (:title post))
-            (h/set-attr :href (:url post)))
+  [:h2 :a] (utils/rewrite-link-with-title
+             (:url post)
+             (:title post))
   [:.post-date] (h/substitute (utils/date-format (:date post)))
   [:.tag] (h/clone-for [tag (:tags post)]
                        (h/substitute (recent-post-tag tag)))
