@@ -1,4 +1,5 @@
 (ns madness.blog.archive
+  "Blog archive templates & snippets."
   (:require [net.cgrand.enlive-html :as h]
             [madness.blog.post :as blog-post]
             [madness.blog :as blog]
@@ -8,6 +9,11 @@
             [madness.blog.recent :as blog-recent]
             [clojure.string :as str]))
 
+;; This snippet renders a single item for the archived posts table. It
+;; takes the post as argument, and rewrites the `recent-post` item
+;; from the template, replacing the class with `archived`, updating
+;; its link and title, and also removing any other content part that
+;; appears on a recent post.
 (h/defsnippet archive-post-item (cfg/template) [:.recent-post]
   [post]
 
@@ -18,6 +24,7 @@
   [:.post-footer] nil
   [:p.summary] nil)
 
+;; Renders a single row of archived posts.
 (h/defsnippet archive-post-row (cfg/template) [:#recents]
   [posts]
 
@@ -31,6 +38,9 @@
                     (h/remove-attr :id)
                     (h/remove-class "visible-desktop")))
 
+;; Renders the whole archive page, be that the main one, or the
+;; per-tag archives. The page will include the title, a list of recent
+;; posts, followed by archived ones, and of course the sidebar.
 (h/deftemplate blog-archive (cfg/template)
   [title blog-posts all-posts]
 

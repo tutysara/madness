@@ -1,8 +1,37 @@
-(ns madness.config)
+(ns madness.config
+  "Configuration handling for Madness.")
 
-(defonce default-config
+(def default-config
+  "The default configuration values, settings in `settings.clj`
+  override these values.
+
+  The settings are as follows:
+
+  * `:template` is a map of filenames to use as templates for various
+    roles, such as: `:default`, `:atom`, and `:empty`.
+
+    The first is a one-file template to use for the whole site. It
+    should include all the bits and pieces needed to build the site.
+
+    The second is the template for Atom feeds: the main feed and the
+    per-tag feeds alike.
+
+    The last one should be an almost empty HTML file, containing only
+    an empty body element.
+
+  * `:dirs`, the directories where the various parts of the sources
+    are to be found.
+
+  * `:recent-posts` and `:archived-posts` both have a `:columns` and a
+    `:rows` setting, which determines how many columns and rows each
+    will have. Setting `:rows` to 0 disables limiting.
+
+  * `:atom` controls the `:base-url` and the `:title` of the generated
+    Atom feeds."
+
   {:template {:default "default.html"
-              :atom "atom.xml"}
+              :atom "atom.xml"
+              :empty "empty.html"}
    :dirs {:posts "resources/posts"
           :pages "resources/pages"
           :output "public/"}
@@ -13,7 +42,9 @@
    :atom {:base-url "http://localhost"
           :title nil}})
 
-(defonce config
+(def config
+  "The final configuration for Madness - `settings.clj` merged into
+  the `default-config`."
   (reduce
    (fn [o, n]
      (let [k (first n), vo (second o), vn (second n)]
@@ -22,38 +53,64 @@
    (eval (read-string (slurp "settings.clj")))))
 
 (defn template
+  "Get the location of a template. Without arguments, returns the
+  location of the default template, otherwise the specified one."
   [& id]
 
   (str "templates/" ((or (first id) :default) (:template config))))
 
 (defmulti recent-posts
+  "Return various settings for recent-posts. Apart from the settable
+  `:rows` and `:columns` setting, this understands `:total` and
+  `:span` too, where the first returns the total number of recent
+  posts to display, and the latter the amount of Bootstrap grid
+  columns a single item should span."
+
   identity)
 
+;; By default, whatever setting was asked for, we look that up in
+;; `config`'s `:recent-posts` map.
 (defmethod recent-posts :default [setting]
   (-> config :recent-posts setting))
 
+;; However, if we want the `:total` number of recent posts, we simply
+;; multiply the number of rows and columns, and add one, so that the
+;; result is suitable for `range`.
 (defmethod recent-posts :total [_]
   (inc (* (recent-posts :columns)
           (recent-posts :rows))))
 
+;; And to determine how many columns a single recent item should span,
+;; we divide 12 by the number of columns, and round it.
 (defmethod recent-posts :span [_]
   (int (/ 12 (recent-posts :columns))))
 
 (defmulti archive-posts
+  "Return various settings for archive-posts. Apart from the settable
+  `:rows` and `:columns` setting, this understands `:span` too, which
+  is the amount of Bootstrap grid columns a single archived item
+  should span"
+  
   identity)
 
+;; By default, whatever setting was asked for, we look that up in
+;; `config`'s `:archive-posts` map.
 (defmethod archive-posts :default [setting]
   (-> config :archive-posts setting))
 
+;; And to determine how many columns a single archive item should
+;; span, we divide 12 by the number of columns, and round it.
 (defmethod archive-posts :span [_]
   (int (/ 12 (archive-posts :columns))))
 
 (defn dirs
+  "Looks up a directory in `config`'s `:dirs` map."
   [role]
 
   (-> config :dirs role))
 
 (defn atom-feed
+  "Looks up a setting in `config`'s `:atom` map."
   [setting]
 
   (-> config :atom setting))
