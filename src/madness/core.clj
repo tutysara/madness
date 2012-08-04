@@ -19,27 +19,52 @@
   (io/write-out-dir file
                     (apply str (render-fn current-post all-posts))))
 
-(defn- render-post
-  [all-posts post]
+(defmulti render
+  (fn [part & args] part))
 
-  (let [fn (str "." (:url post) "index.html")]
-    (render-to-file all-posts post blog-post/blog-post fn)))
+(defmethod render :index [_]
+  (render-to-file nil blog-posts blog-index/blog-index "index.html"))
 
-(defn- render-page
-  [all-posts page]
+(defmethod render :archive [_]
+  (render-to-file blog-posts blog-posts
+                  (partial blog-archive/blog-archive "Archive")
+                  "blog/archives/index.html"))
 
-  (let [fn (str "." (:url page))]
-    (render-to-file all-posts page blog-page/blog-page fn)))
-
-(defn- render-archive
-  [all-posts tag tagged-posts]
-
+(defmethod render :tag-archive
+  [_ all-posts tag tagged-posts]
+  
   (let [fn (str "." (utils/tag-to-url tag) "index.html")]
     (render-to-file all-posts tagged-posts
                     (partial blog-archive/blog-archive (str "Tag: " tag)) fn)))
 
-(defn- render-feed
-  [tag tagged-posts]
+(defmethod render :tags [_]
+  (dorun (map #(render :tag-archive blog-posts %1 (get blog-tag-grouped %1))
+              (keys blog-tag-grouped))))
+
+(defmethod render :post
+  [_ all-posts post]
+
+  (let [fn (str "." (:url post) "index.html")]
+    (render-to-file all-posts post blog-post/blog-post fn)))
+
+(defmethod render :posts [_]
+  (dorun (map (partial render :post blog-posts) blog-posts)))
+
+(defmethod render :page
+  [_ all-posts page]
+
+  (let [fn (str "." (:url page))]
+    (render-to-file all-posts page blog-page/blog-page fn)))
+
+(defmethod render :pages [_]
+  (dorun (map (partial render :page blog-posts) blog-pages)))
+
+(defmethod render :main-feed [_]
+  (io/write-out-dir "blog/atom.xml"
+                    (blog-feed/emit-atom (cfg/atom-feed :title) "/blog/" blog-posts)))
+
+(defmethod render :tag-feed
+  [_ tag tagged-posts]
 
   (let [fn (str "." (utils/tag-to-url tag) "atom.xml")]
     (io/write-out-dir fn
@@ -48,34 +73,15 @@
                        (utils/tag-to-url tag)
                        tagged-posts))))
 
+(defmethod render :tag-feeds [_]
+  (dorun (map #(render :tag-feed %1 (get blog-tag-grouped %1))
+              (keys blog-tag-grouped))))
+
+(defn- str->keyword
+  [s]
+
+  (keyword (apply str (rest s))))
+
 (defn -main
   ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed" ":pages" ":tag-feeds"))
-  ([& args]
-     
-     (when (some #(= ":index" %1) args)
-       (render-to-file nil blog-posts blog-index/blog-index "index.html"))
-
-     (when (some #(= ":archive" %1) args)
-       (render-to-file blog-posts blog-posts
-                       (partial blog-archive/blog-archive "Archive")
-                       "blog/archives/index.html"))
-
-     (when (some #(= ":tags" %1) args)
-       (dorun (map #(render-archive blog-posts %1 (get blog-tag-grouped %1))
-                   (keys blog-tag-grouped))))
-
-     (when (some #(= ":posts" %1) args)
-       (dorun (map (partial render-post blog-posts)
-                   blog-posts)))
-
-     (when (some #(= ":pages" %1) args)
-       (dorun (map (partial render-page blog-posts)
-                   blog-pages)))
-
-     (when (some #(= ":main-feed" %1) args)
-       (io/write-out-dir "blog/atom.xml"
-                         (blog-feed/emit-atom (cfg/atom-feed :title) "/blog/" blog-posts)))
-
-     (when (some #(= ":tag-feeds" %1) args)
-       (dorun (map #(render-feed %1 (get blog-tag-grouped %1))
-                   (keys blog-tag-grouped))))))
+  ([& args] (dorun (map render (map str->keyword args)))))
