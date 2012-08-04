@@ -7,7 +7,7 @@
 
 (def atom-date-formatter (time-format/formatter "yyyy-MM-dd'T'HH:mm:ssZZ"))
 
-(h/deftemplate bare-post "templates/empty.html"
+(h/deftemplate bare-post (cfg/template :empty)
   [post]
 
   [:html] (h/substitute (:summary post) (:content post)))
