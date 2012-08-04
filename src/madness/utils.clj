@@ -1,6 +1,7 @@
 (ns madness.utils
   (:require [clojure.string :as str]
-            [clj-time.format :as time-format]))
+            [clj-time.format :as time-format]
+            [net.cgrand.enlive-html :as h]))
 
 (def hr-desktop [{:tag :hr :attrs {:class "visible-desktop"}}])
 
@@ -53,3 +54,18 @@
       (recur (drop columns posts)
              (inc c)
              (conj result (take columns posts))))))
+
+(defn rewrite-link
+  [url content]
+
+  (h/do->
+   (h/set-attr :href url)
+   (h/content content)))
+
+(defn rewrite-link-with-title
+  [url title]
+
+  (h/do->
+   (h/set-attr :href url)
+   (h/set-attr :title title)
+   (h/content " " title)))

@@ -24,9 +24,7 @@
   [post]
 
   [:h1] (h/set-attr :title (:title post))
-  [:h1 :a] (h/do->
-            (h/content (:title post))
-            (h/set-attr :href (:url post))))
+  [:h1 :a] (utils/rewrite-link (:url post) (:title post)))
 
 (h/deftemplate blog-index (cfg/template)
   [blog-posts _]

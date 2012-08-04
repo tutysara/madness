@@ -13,10 +13,8 @@
 
   [:.recent-post] (h/remove-class "recent-post")
   [:h2] (h/add-class "archived")
-  [:h2 :a] (h/do->
-            (h/content " " (:title post))
-            (h/set-attr :title (:title post))
-            (h/set-attr :href (:url post)))
+  [:h2 :a] (utils/rewrite-link-with-title
+             (:url post) (:title post))
   [:.post-footer] nil
   [:p.summary] nil)
 
@@ -32,7 +30,6 @@
   [:#recent-posts] (h/do->
                     (h/remove-attr :id)
                     (h/remove-class "visible-desktop")))
-
 
 (h/deftemplate blog-archive (cfg/template)
   [title blog-posts all-posts]

@@ -6,16 +6,12 @@
 (h/defsnippet recent-item (cfg/template) [:#nav-recent-posts :ul :li]
   [title url]
 
-  [:a] (h/do->
-        (h/set-attr :href url)
-        (h/content title)))
+  [:a] (utils/rewrite-link url title))
 
 (h/defsnippet tag-item (cfg/template) [:#nav-tags :ul :li]
   [tag]
 
-  [:a] (h/do->
-        (h/set-attr :href (utils/tag-to-url tag))
-        (h/content tag)))
+  [:a] (utils/rewrite-link (utils/tag-to-url tag) tag))
 
 (defn recent-posts
   [all-posts]
