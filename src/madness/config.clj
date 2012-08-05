@@ -49,7 +49,7 @@
               :empty "empty.html"}
    :dirs {:posts "resources/posts"
           :pages "resources/pages"
-          :output "public/"}
+          :output "public"}
    :recent-posts {:columns 3
                   :rows 2}
    :archive-posts {:columns 3

@@ -7,9 +7,7 @@
               :url "http://www.gnu.org/licenses/gpl.txt"}}
 
   (:require [madness.config :as cfg]
-            [clojure.string :as str])
-  (:import (java.io File)
-           (org.apache.commons.io FileUtils FilenameUtils)))
+            [clojure.string :as str]))
 
 (defn write-out-dir
   "Given a filename, write a string into it, creating the file and the
@@ -20,5 +18,4 @@
 
   (let [fn (str/join "/" [(cfg/dirs :output) file])]
     (println "Writing " fn "...")
-    (FileUtils/writeStringToFile
-     (File. fn) str "UTF-8")))
+    (spit fn str :encoding "UTF-8")))

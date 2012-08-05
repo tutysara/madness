@@ -13,19 +13,15 @@
 
   (:require [madness.blog.post :as blog-post]
             [madness.blog.page :as blog-page]
-            [madness.config :as cfg])
-  (:import (java.io File)
-           (org.apache.commons.io FileUtils FilenameUtils)))
+            [madness.config :as cfg]
+            [fs.core :as fs]))
 
 (defn list-files
   "List all HTML files within a given directory. Returns an array."
   
   [dir]
 
-  (let [d (File. dir)]
-    (if (.isDirectory d)
-      (sort #(compare %2 %1)
-       (FileUtils/listFiles d (into-array ["html"]) true)) [] )))
+  (sort #(compare %2 %1) (fs/find-files dir #".*\.html$")))
 
 (defn load-posts
   "Load all posts for the blog. Returns a sequence of processed blog
