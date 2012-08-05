@@ -1,5 +1,9 @@
 (defproject madness "0.0.0-SNAPSHOT"
-  :description "Static site generator, based on Enlive and Bootstrap."
+  :description "Static site generator, based on [Enlive][1] and
+  [Bootstrap][2].
+
+  [1]: https://github.com/cgrand/enlive/wiki
+  [2]: http://twitter.github.com/bootstrap/"
   :url "https://github.com/algernon/madness"
   :license {:name "GNU General Public License - v3"
             :url "http://www.gnu.org/licenses/gpl.txt"

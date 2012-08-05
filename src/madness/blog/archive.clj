@@ -1,5 +1,8 @@
 (ns madness.blog.archive
-  "Blog archive templates & snippets."
+  "## Low-level archive rendering
+
+  Archives are pages that do not have any content, but the title, and
+  a list of recent posts, and optionally archived posts."
 
   ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
     :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
@@ -30,7 +33,8 @@
   [:.post-footer] nil
   [:p.summary] nil)
 
-;; Renders a single row of archived posts.
+;; Renders a single row of archived posts, using the `#recents`
+;; element of the template as source.
 (h/defsnippet archive-post-row (cfg/template) [:#recents]
   [posts]
 
@@ -46,7 +50,10 @@
 
 ;; Renders the whole archive page, be that the main one, or the
 ;; per-tag archives. The page will include the title, a list of recent
-;; posts, followed by archived ones, and of course the sidebar.
+;; posts, followed by archived ones, and of course the
+;; sidebar. Everything else is disabled.
+;;
+;; Uses the `#recents` and `#archive` elements of the template mostly.
 (h/deftemplate blog-archive (cfg/template)
   [title blog-posts all-posts]
 
