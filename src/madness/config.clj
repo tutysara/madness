@@ -1,5 +1,9 @@
 (ns madness.config
-  "Configuration handling for Madness."
+  "## Configuration handling for Madness.
+
+  Madness can be configured by placing a file called `settings.clj` in
+  the root directory. Settings therein will override the defaults when
+  the file gets evaluated."
 
   ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
     :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
@@ -19,7 +23,8 @@
     roles, such as: `:default`, `:atom`, and `:empty`.
 
     The first is a one-file template to use for the whole site. It
-    should include all the bits and pieces needed to build the site.
+    should include all the bits and pieces needed to build the site,
+    more about that in the [next section][1].
 
     The second is the template for Atom feeds: the main feed and the
     per-tag feeds alike.
@@ -35,7 +40,9 @@
     will have. Setting `:rows` to 0 disables limiting.
 
   * `:atom` controls the `:base-url` and the `:title` of the generated
-    Atom feeds."
+    Atom feeds.
+
+  [1]: #madness.render"
 
   {:template {:default "default.html"
               :atom "atom.xml"
