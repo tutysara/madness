@@ -19,13 +19,6 @@
   [:#hero-full :a] (h/set-attr :href (:url post))
   [:#hero-full] (h/remove-attr :id))
 
-(h/defsnippet index-post-date (cfg/template) [:#hero-date]
-  [post]
-
-  [:#hero-date] (h/do->
-                 (h/content (utils/date-format (:date post)))
-                 (h/remove-attr :id)))
-
 (h/defsnippet blog-index-first-title (cfg/template) [:.hero-unit :h1]
   [post]
 
