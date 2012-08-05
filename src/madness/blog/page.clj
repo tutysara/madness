@@ -1,4 +1,10 @@
 (ns madness.blog.page
+
+  ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
+    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "GNU General Public License - v3"
+              :url "http://www.gnu.org/licenses/gpl.txt"}}
+  
   (:require [net.cgrand.enlive-html :as h]
             [madness.blog.nav :as blog-nav]
             [madness.utils :as utils]

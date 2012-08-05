@@ -1,5 +1,13 @@
 (ns madness.config
-  "Configuration handling for Madness.")
+  "Configuration handling for Madness."
+
+  ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
+    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "GNU General Public License - v3"
+              :url "http://www.gnu.org/licenses/gpl.txt"}}
+
+  ; Dummy :use, so that the meta-data above gets parsed correctly.
+  (:use [clojure.core]))
 
 (def default-config
   "The default configuration values, settings in `settings.clj`

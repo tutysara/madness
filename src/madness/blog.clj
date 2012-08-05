@@ -1,5 +1,11 @@
 (ns madness.blog
   "Post & page loading functions."
+
+  ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
+    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "GNU General Public License - v3"
+              :url "http://www.gnu.org/licenses/gpl.txt"}}
+
   (:require [madness.blog.post :as blog-post]
             [madness.blog.page :as blog-page]
             [madness.config :as cfg])

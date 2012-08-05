@@ -1,5 +1,11 @@
 (ns madness.render
   "High-level render functions"
+
+  ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
+    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "GNU General Public License - v3"
+              :url "http://www.gnu.org/licenses/gpl.txt"}}
+
   (:require [madness.io :as io]
             [madness.blog :as blog]
             [madness.blog.index :as blog-index]
