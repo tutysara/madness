@@ -15,7 +15,7 @@
 (def docs #^{:private true}
   ["core", "config", "render", "io", "utils", "blog",
    "blog/nav", "blog/recent", "blog/post", "blog/page",
-   "blog/archive", "blog/atom", "blog/index"])
+   "blog/archive", "blog/index", "blog/atom"])
 
 (defn- fiddle-path
   [path]
