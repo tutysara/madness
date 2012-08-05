@@ -1,12 +1,8 @@
 Madness
 =======
 
-`madness` is a static-site generation tool that I use to to build my
-own [website][1]. As of now, there is little to no documentation, but
-checking out the `asylum` branch, one will be able to peek at how
-templates, posts and pages look.
-
-At some point, as time allows, more documentation will be written. For
-now, use the source!
+madness is a static-site generation tool that I use to to build my own
+[website][1]. For the documentation, look [here][2]!
 
  [1]: http://asylum.madhouse-project.org/
+ [2]: http://algernon.github.com/madness/
