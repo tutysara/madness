@@ -1,5 +1,11 @@
 (ns madness.io
   "I/O helper routines"
+
+  ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
+    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "GNU General Public License - v3"
+              :url "http://www.gnu.org/licenses/gpl.txt"}}
+
   (:require [madness.config :as cfg]
             [clojure.string :as str])
   (:import (java.io File)

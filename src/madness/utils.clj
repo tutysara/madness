@@ -1,5 +1,11 @@
 (ns madness.utils
   "Assorted utilities."
+
+  ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
+    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "GNU General Public License - v3"
+              :url "http://www.gnu.org/licenses/gpl.txt"}}
+
   (:require [clojure.string :as str]
             [clj-time.format :as time-format]
             [net.cgrand.enlive-html :as h]))
