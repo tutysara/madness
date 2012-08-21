@@ -3034,7 +3034,7 @@ net.brehaut.ClojureTools = (function (SH) {
 })(SyntaxHighlighter);
 </script><title>madness -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">madness</h1><h2 class="project-version">0.0.0-SNAPSHOT</h2><br /><p>Static site generator, based on <a href="https://github.com/cgrand/enlive/wiki">Enlive</a> and
   <a href="http://twitter.github.com/bootstrap/">Bootstrap</a>.</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.4.0</td></tr><tr><td class="dep-name">enlive/enlive</td><td class="dotted"><hr /></td><td class="dep-version">1.0.0</td></tr><tr><td class="dep-name">clj-time</td><td class="dotted"><hr /></td><td class="dep-version">0.4.3</td></tr><tr><td class="dep-name">org.clojars.amit/commons-io</td><td class="dotted"><hr /></td><td class="dep-version">1.4.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#madness">madness</a></li><li><a href="#madness.core">madness.core</a></li><li><a href="#madness.config">madness.config</a></li><li><a href="#madness.render">madness.render</a></li><li><a href="#madness.io">madness.io</a></li><li><a href="#madness.utils">madness.utils</a></li><li><a href="#madness.blog">madness.blog</a></li><li><a href="#madness.blog.nav">madness.blog.nav</a></li><li><a href="#madness.blog.recent">madness.blog.recent</a></li><li><a href="#madness.blog.post">madness.blog.post</a></li><li><a href="#madness.blog.page">madness.blog.page</a></li><li><a href="#madness.blog.archive">madness.blog.archive</a></li><li><a href="#madness.blog.index">madness.blog.index</a></li><li><a href="#madness.blog.atom">madness.blog.atom</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#madness" name="madness"><h1 class="project-name">madness</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><h2>Madness</h2>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.4.0</td></tr><tr><td class="dep-name">enlive/enlive</td><td class="dotted"><hr /></td><td class="dep-version">1.0.0</td></tr><tr><td class="dep-name">clj-time</td><td class="dotted"><hr /></td><td class="dep-version">0.4.3</td></tr><tr><td class="dep-name">fs</td><td class="dotted"><hr /></td><td class="dep-version">1.3.2</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#madness">madness</a></li><li><a href="#madness.core">madness.core</a></li><li><a href="#madness.config">madness.config</a></li><li><a href="#madness.render">madness.render</a></li><li><a href="#madness.io">madness.io</a></li><li><a href="#madness.utils">madness.utils</a></li><li><a href="#madness.blog">madness.blog</a></li><li><a href="#madness.blog.nav">madness.blog.nav</a></li><li><a href="#madness.blog.recent">madness.blog.recent</a></li><li><a href="#madness.blog.post">madness.blog.post</a></li><li><a href="#madness.blog.page">madness.blog.page</a></li><li><a href="#madness.blog.archive">madness.blog.archive</a></li><li><a href="#madness.blog.index">madness.blog.index</a></li><li><a href="#madness.blog.atom">madness.blog.atom</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#madness" name="madness"><h1 class="project-name">madness</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><h2>Madness</h2>
 
 <p>Madness is a static site generator tool, primarily aimed at
 generating a blog, but also supports static pages too. It was
@@ -3196,7 +3196,7 @@ Atom feeds.</p></li>
               :empty &quot;empty.html&quot;}
    :dirs {:posts &quot;resources/posts&quot;
           :pages &quot;resources/pages&quot;
-          :output &quot;public/&quot;}
+          :output &quot;public&quot;}
    :recent-posts {:columns 3
                   :rows 2}
    :archive-posts {:columns 3
@@ -3405,17 +3405,16 @@ through all the tags is all it takes to render them all.</p>
     :license {:name &quot;GNU General Public License - v3&quot;
               :url &quot;http://www.gnu.org/licenses/gpl.txt&quot;}}
   (:require [madness.config :as cfg]
-            [clojure.string :as str])
-  (:import (java.io File)
-           (org.apache.commons.io FileUtils FilenameUtils)))</pre></td></tr><tr><td class="docs"><p>Given a filename, write a string into it, creating the file and the
+            [clojure.string :as str]
+            [fs.core :as fs]))</pre></td></tr><tr><td class="docs"><p>Given a filename, write a string into it, creating the file and the
   directories if needed. The destination directory can be overridden
   via the configuration mechanism.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn write-out-dir
   [file str]
   (let [fn (str/join &quot;/&quot; [(cfg/dirs :output) file])]
     (println &quot;Writing &quot; fn &quot;...&quot;)
-    (FileUtils/writeStringToFile
-     (File. fn) str &quot;UTF-8&quot;)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#madness.utils" name="madness.utils"><h1 class="project-name">madness.utils</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Assorted utilities.</p>
+    (fs/mkdirs (fs/parent fn))
+    (spit fn str :encoding &quot;UTF-8&quot;)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#madness.utils" name="madness.utils"><h1 class="project-name">madness.utils</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Assorted utilities.</p>
 </td><td class="codes"><pre class="brush: clojure">(ns madness.utils
   ^{:author &quot;Gergely Nagy &lt;algernon@madhouse-project.org&gt;&quot;
     :copyright &quot;Copyright (C) 2012 Gergely Nagy &lt;algernon@madhouse-project.org&gt;&quot;
@@ -3495,15 +3494,11 @@ through all the tags is all it takes to render them all.</p>
               :url &quot;http://www.gnu.org/licenses/gpl.txt&quot;}}
   (:require [madness.blog.post :as blog-post]
             [madness.blog.page :as blog-page]
-            [madness.config :as cfg])
-  (:import (java.io File)
-           (org.apache.commons.io FileUtils FilenameUtils)))</pre></td></tr><tr><td class="docs"><p>List all HTML files within a given directory. Returns an array.</p>
+            [madness.config :as cfg]
+            [fs.core :as fs]))</pre></td></tr><tr><td class="docs"><p>List all HTML files within a given directory. Returns an array.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn list-files
   [dir]
-  (let [d (File. dir)]
-    (if (.isDirectory d)
-      (sort #(compare %2 %1)
-       (FileUtils/listFiles d (into-array [&quot;html&quot;]) true)) [] )))</pre></td></tr><tr><td class="docs"><p>Load all posts for the blog. Returns a sequence of processed blog
+  (sort #(compare %2 %1) (fs/find-files dir #&quot;.*\.html$&quot;)))</pre></td></tr><tr><td class="docs"><p>Load all posts for the blog. Returns a sequence of processed blog
   posts. See the <a href="#madness.blog.post">blog.post</a> namespace for more information about
   how a processed post looks like.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn load-posts
