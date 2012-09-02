@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>tutysara's space</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Gergely Nagy">
+
+    <link href="/assets/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/font-awesome.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/assets/gcp/prettify.css" type="text/css" rel="stylesheet">
+    <link href="/assets/asylum/images/mhp-logo.png" rel="icon">
+    <link rel="alternate" type="application/atom+xml" title="tutysara's site"
+          href="/blog/atom.xml">
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a href="/" class="brand">tutysara </a>
+
+          <ul class="nav">
+            <li><a href="/"><b class="icon-home hidden-desktop"> </b><span class="visible-desktop">Home</span></a></li>
+            <li><a href="/about/"><b class="icon-info-sign hidden-desktop"> </b><span class="visible-desktop">About</span></a></li>
+            <li><a href="/blog/archives/"><b class="icon-sitemap hidden-desktop"> </b><span class="visible-desktop">Archives</span></a></li>
+          </ul>
+
+          <div class="nav-collapse">    
+            <ul class="nav pull-right visible-desktop">
+              <li><a href="/blog/atom.xml" id="rss-feed" style="font-size: 200%"><i class="icon-rss"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span10" id="content-area">
+          <div class="hero-unit">
+            <h1 title="The latest article"><a>The latest article</a></h1>
+
+            <p>This should be the summary of the latest article, a
+            paragraph or two maybe.</p>
+
+            <p id="hero-full"><a class="btn btn-success btn-large">Read on &raquo;</a></p>
+
+            <div id="full-article-footer" class="row-fluid">
+              <hr>
+
+              <div class="pull-left post-footer">
+                <a href="/blog/tags/foo" class="btn btn-info"><i class="icon-tag"></i> <span>foo</span></a>
+              </div>
+              <div class="pull-right" id="post-date">
+                2012-06-23
+              </div>
+            </div>
+
+            <div id="disqus" class="visible-desktop">
+              <div id="disqus_thread"></div>
+              <script type="text/javascript">
+                var disqus_shortname = 'algernon';
+                var disqus_identifier = 'http://asylum.madhouse-project.org/' + window.location.pathname.replace("//", "/");
+                var disqus_url = disqus_identifier;
+
+                (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+              </script>
+              <noscript>
+                Please enable JavaScript to view
+                the <a href="http://disqus.com/?ref_noscript">comments
+                powered by Disqus.</a>
+              </noscript>
+              <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+          </div>
+
+          <div id="post-neighbours">
+            <div class="row-fluid">
+              <div class="pull-left">
+                <a href="#">&laquo; <span>Title of the previous post</span></a>
+              </div>
+              <div class="pull-right">
+                <a href="#"><span>Title of the next post</span> &raquo;</a>
+              </div>
+            </div>
+          </div>
+
+          <div id="recents">
+            <div class="row-fluid visible-desktop" id="recent-posts">
+              <div class="span4 recent-post">
+                <h2 class="post-header">
+                  <a href="#" class="icon-book" rel="tooltip" title="Title">Title</a>
+                </h2>
+
+                <p class="summary">
+                  Donec id elit non mi porta gravida at eget
+                  metus. Fusce dapibus, tellus ac cursus commodo, tortor
+                  mauris condimentum nibh, ut fermentum massa justo sit
+                  amet risus. Etiam porta sem malesuada magna mollis
+                  euismod. Donec sed odio dui.
+                </p>
+
+                <div class="post-footer visible-desktop">
+                  <a class="tag btn btn-info btn-mini" href="/blog/tags/tag"><i class="icon-tag"></i> <span>tag</span></a>
+
+                  <span class="pull-right">
+                    <i class="icon-time"></i> <span class="post-date">2012-06-23</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="archive">
+          </div>
+
+        </div>
+
+        <div class="span2 visible-desktop" id="sidebar">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header" id="nav-recent-posts">
+                <i class="icon-bullhorn"></i> Recent Posts
+                <ul class="nav-list nav">
+                  <li><a href="#">Link</a></li>
+                </ul>
+              </li>
+              <li class="nav-header" id="nav-tags">
+                <i class="icon-tags"></i> Tags
+                <ul class="nav-list nav">
+                  <li><a href="#">Link</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header" id="nav-social">
+                <i class="icon-phone"></i> tutysara elsewhere
+                <ul class="nav-list nav">
+                  <li><a href="https://github.com/tutysara/"><i class="icon-github"></i> tutysara</a></li>
+                  <li><a href="https://plus.google.com/113376160578552687607/posts"><i class="icon-google-plus"></i> +tutysara</a></li>
+                  <li><a href="https://twitter.com/tutysara"><i class="icon-twitter"></i> @tutysara</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <div class="pull-left">
+          Copyright &copy; 2010, 2011, 2012 - Saravana;
+          Powered by <a href="https://github.com/algernon/madness">madness</a>.
+        </div>
+        <div class="pull-right">
+          <a rel="license" class="pull-right"
+             href="http://creativecommons.org/licenses/by-sa/3.0/">
+            <img alt="Creative Commons License"
+                 src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png"
+                 width="80" height="15"></a>
+        </div>
+      </footer>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/gcp/prettify.js"></script>
+    <script src="/assets/asylum/js/asylum.js"></script>
+  </body>
+</html>

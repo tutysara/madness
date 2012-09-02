@@ -15,9 +15,9 @@
   directories if needed. The destination directory can be overridden
   via the configuration mechanism."
 
-  [file str]
+  [file-name str]
 
-  (let [fn (str/join "/" [(cfg/dirs :output) file])]
-    (println "Writing " fn "...")
-    (fs/mkdirs (fs/parent fn))
-    (spit fn str :encoding "UTF-8")))
+  (let [file-path (str/join "/" [(cfg/dirs :output) file-name])] ;; @change - changed fo file name fo keep in different from fn
+    (println "Writing " file-path "...") ;; @change - try to use logs if necessary
+    (fs/mkdirs (fs/parent file-path))
+    (spit file-path str :encoding "UTF-8")))

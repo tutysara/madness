@@ -9,7 +9,9 @@
     :license {:name "GNU General Public License - v3"
               :url "http://www.gnu.org/licenses/gpl.txt"}}
   
-  (:require [madness.render :as render]))
+  (:require [madness.render :as render]
+            [ring.adapter.jetty :as jetty]
+            [ring.middleware.file :as ring-file]))
 
 (defn- str->keyword
   "Takes a string, strips the first char (assumed to be `:`), and
@@ -36,3 +38,12 @@
   
   ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed" ":pages" ":tag-feeds"))
   ([& args] (dorun (map render/render (map str->keyword args)))))
+
+(defn tst-server
+  "Runs the test server from the public directory"
+  []
+  (let [public "/home/tutysra/src/myprojects/site/tutysara.github.com"]
+    (jetty/run-jetty
+     (-> (fn [req])
+         (ring-file/wrap-file public))
+     {:port 8081 :join? false})))

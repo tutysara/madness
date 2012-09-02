@@ -185,7 +185,7 @@
 (h/deftemplate blog-post (cfg/template)
   [post all-posts]
 
-  [:title] (h/content (:title post) " - Asylum")
+  [:title] (h/content (:title post) " - tutysara") ;; @change - move this to a config
   [:#recents] nil
   [:#archive] nil
   [:.hero-unit] (h/do->
@@ -195,5 +195,5 @@
                             (blog-post-footer post)
                             (blog-post-disqus post)))
   [:#post-neighbours] (h/substitute (blog-post-neighbours (utils/neighbours all-posts post)))
-  [:#nav-recent-posts :ul :li] (blog-nav/recent-posts all-posts)
+  [:#nav-recent-posts :ul :li] (blog-nav/recent-posts all-posts) ;; @change - show only the top 10
   [:#nav-tags :ul :li] (blog-nav/all-tags all-posts))

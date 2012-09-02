@@ -51,7 +51,7 @@
 ;; [2]: #madness.blog.nav
 ;;
 (h/deftemplate blog-index (cfg/template)
-  [blog-posts _]
+  [_ blog-posts]
 
   [:.hero-unit] (h/do->
                  (h/content (blog-index-first-title (first blog-posts))

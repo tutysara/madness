@@ -44,18 +44,18 @@
 (defn posts-tagged
   "Return a list of posts tagged with a given tag."
 
-  [posts tag]
+  [blog-posts tag]
 
-  (filter #(post-tagged? %1 tag) posts))
+  (filter #(post-tagged? %1 tag) blog-posts))
 
 (defn group-blog-by-tags
   "Group all blog posts by their tags. Posts may appear under multiple
   tags. Returns a hash-map, with the tags as keys, and the list of
   posts as values."
 
-  [blog]
+  [blog-posts]
 
-  (reduce #(assoc %1 %2 (posts-tagged blog %2)) {} (tags blog)))
+  (reduce #(assoc %1 %2 (posts-tagged blog-posts %2)) {} (tags blog-posts)))
 
 (defn neighbours
   "Given a full blog, and a single post, find the previous and the

@@ -12,6 +12,7 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [enlive/enlive "1.0.0"]
                  [clj-time "0.4.3"]
-                 [fs "1.3.2"]]
+                 [fs "1.3.2"]
+                 [ring "1.0.0"]]
   :profiles {:dev {:dependencies [[marginalia "0.7.0"]]}}
   :aliases {"build-docs" ["with-profile" "dev" "run" "-m" "madness.docs/generate-docs"]})

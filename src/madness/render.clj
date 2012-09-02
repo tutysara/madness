@@ -36,9 +36,9 @@
 
 (defn- render-to-file
   "Render a post or page to a file, using a custom render function."
-  [all-posts current-post render-fn file]
+  [all-posts current-post render-fn file-name]
 
-  (io/write-out-dir file
+  (io/write-out-dir file-name
                     (apply str (render-fn current-post all-posts))))
 
 ;; ### Rendering
@@ -75,7 +75,7 @@
 ;; [1]: #madness.blog.index
 ;;
 (defmethod render :index [_]
-  (render-to-file nil blog-posts blog-index/blog-index "index.html"))
+  (render-to-file blog-posts nil blog-index/blog-index "index.html")) ;; @change - change this ordering for easy understanding
 
 ;; ### The global archive
 ;;

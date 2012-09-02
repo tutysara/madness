@@ -100,7 +100,7 @@
 (h/deftemplate blog-page (cfg/template)
   [page all-posts]
 
-  [:title] (h/content (:title page) " - Asylum")
+  [:title] (h/content (:title page) " - tutysara") ;; @change - try to move it to a config
   [:#recents] nil
   [:#archive] nil
   [:#post-neighbours] nil
