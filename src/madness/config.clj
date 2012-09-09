@@ -54,7 +54,7 @@
                   :rows 2}
    :archive-posts {:columns 3
                    :rows 0}
-   :atom {:base-url "http://localhost"
+   :atom {:base-url "http://tutysara.github.com"
           :title nil}})
 
 (def config

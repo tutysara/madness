@@ -24,9 +24,7 @@
 (defn -main
   "The main entry point of Madness: when called without arguments,
   generates everything. If called with a list of (string) keywords,
-  only generates the given parts of the blog.
-
-  The following keywords are understood:
+  only generates the given parts of the blog.  The following keywords are understood:
 
   * `:index`: The main index page of the blog.
   * `:archive`: The main archive page of the blog.
@@ -46,4 +44,4 @@
     (jetty/run-jetty
      (-> (fn [req])
          (ring-file/wrap-file public))
-     {:port 8081 :join? false})))
+     {:port 8080 :join? false})))
