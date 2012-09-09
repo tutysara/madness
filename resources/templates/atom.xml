@@ -2,9 +2,9 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title>tutysara's Archives</title>
-  <link href="http://localhost:8080/blog/atom.xml"
+  <link href="http://tutysara.github.com/blog/atom.xml"
         rel="self" id="self"/>
-  <link href="http://localhost:8080" id="base" />
+  <link href="http://tutysara.github.com" id="base" />
   <updated>2012-06-20T01:15:22+02:00</updated>
   <id>http://localhost:8080/</id>
   <author>

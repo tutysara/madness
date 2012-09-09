@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <title>tutysara's space</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Gergely Nagy">
+    <meta name="author" content="Saravana">
 
     <link href="/assets/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="/assets/bootstrap/css/font-awesome.css" rel="stylesheet">
     <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="/assets/gcp/prettify.css" type="text/css" rel="stylesheet">
-    <link href="/assets/asylum/images/mhp-logo.png" rel="icon">
+    <link href="/assets/images/favicon.ico" rel="icon">
     <link rel="alternate" type="application/atom+xml" title="tutysara's site"
           href="/blog/atom.xml">
 
@@ -39,6 +39,25 @@
 
           <div class="nav-collapse">    
             <ul class="nav pull-right visible-desktop">
+              <li>
+                <form action="http://www.google.com/search"
+               method="get" class="form-inline">   
+                  <div class="control-group">
+                    <div class="controls">
+                      <div class="input-append">                           
+                        <input type="search" class="span3"
+                            placeholder="Search" name="q"
+                            id="search"/>
+                        <span class="add-on">
+                              <i class="icon-search"></i>
+                        </span>
+                        <input value="tutysara.github.com"
+                          name="sitesearch" type="hidden" />
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </li>
               <li><a href="/blog/atom.xml" id="rss-feed" style="font-size: 200%"><i class="icon-rss"></i></a></li>
             </ul>
           </div>
@@ -71,9 +90,10 @@
             <div id="disqus" class="visible-desktop">
               <div id="disqus_thread"></div>
               <script type="text/javascript">
-                var disqus_shortname = 'algernon';
-                var disqus_identifier = 'http://asylum.madhouse-project.org/' + window.location.pathname.replace("//", "/");
-                var disqus_url = disqus_identifier;
+                // var disqus_developer=1; //developer mode is on
+                var disqus_shortname = 'tutysarablog';
+                var disqus_identifier = window.location.pathname.replace("//", "/");
+                var disqus_url = 'http://tutysara.github.com'+disqus_identifier;
 
                 (function() {
                 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -144,7 +164,9 @@
               <li class="nav-header" id="nav-tags">
                 <i class="icon-tags"></i> Tags
                 <ul class="nav-list nav">
-                  <li><a href="#">Link</a></li>
+                  <li>
+                    <a href="#">Link</a>                   
+                  </li>
                 </ul>
               </li>
             </ul>
@@ -187,5 +209,18 @@
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/assets/gcp/prettify.js"></script>
     <script src="/assets/asylum/js/asylum.js"></script>
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-34510369-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
   </body>
 </html>
