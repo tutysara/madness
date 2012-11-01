@@ -87,7 +87,7 @@
      :url (post-url date (.getName file))
      :comments (or
                 (-> (first (h/select post [:article])) :attrs :comments enabled?)
-                (-> (h/text (h/select post [:article :comments])) enabled?)),
+                (-> (h/text (first (h/select post [:article :comments]))) enabled?)),
      :content (h/select post [:section])}))
 
 ;; ### Blog post templates
