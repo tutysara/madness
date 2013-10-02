@@ -9,9 +9,13 @@
 ;; Source is available on [github][2], and this documentation is also
 ;; available [online][3].
 ;;
+;; The source code, the design and the posts on the `asylum` branch
+;; are all under a [CC-BY-SA-3.0][5] license.
+;;
 ;; [1]: http://asylum.madhouse-project.org/
 ;; [2]: https://github.com/algernon/madness
-;; [3]: http://algernon.github.com/madness/
+;; [3]: http://algernon.github.io/madness/
+;; [5]: http://creativecommons.org/licenses/by-sa/3.0/
 ;;
 ;; ### Requirements
 ;;
@@ -93,7 +97,5 @@
 ;; It's responsive, straightforward, and quite simple too, as far as I
 ;; can tell. It also degrades well even down to text-mode browsers.
 ;;
-
-
 
 (ns madness)

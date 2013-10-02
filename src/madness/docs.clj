@@ -7,13 +7,13 @@
 
   ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
     :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
-    :license {:name "GNU General Public License - v3"
-              :url "http://www.gnu.org/licenses/gpl.txt"}}
+    :license {:name "Creative Commons Attribution-ShareAlike 3.0"
+              :url "http://creativecommons.org/licenses/by-sa/3.0/"}}
 
   (:use [marginalia.core]))
 
 (def docs #^{:private true}
-  ["../madness", "core", "config", "render", "io", "utils", "blog",
+  ["../madness", "core", "config", "resources", "render", "io", "utils", "blog",
    "blog/nav", "blog/recent", "blog/post", "blog/page",
    "blog/archive", "blog/index", "blog/atom"])
 

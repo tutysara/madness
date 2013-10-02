@@ -7,32 +7,26 @@
   site, neither speed nor memory requirements are particularly bad."
 
   ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
-    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
-    :license {:name "GNU General Public License - v3"
-              :url "http://www.gnu.org/licenses/gpl.txt"}}
-
+    :copyright "Copyright (C) 2012, 2013 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "Creative Commons Attribution-ShareAlike 3.0"
+              :url "http://creativecommons.org/licenses/by-sa/3.0/"}}
   (:require [madness.blog.post :as blog-post]
             [madness.blog.page :as blog-page]
             [madness.config :as cfg]
-            [fs.core :as fs]))
-
-(defn list-files
-  "List all HTML files within a given directory. Returns an array."
-  
-  [dir]
-
-  (sort #(compare %2 %1) (fs/find-files dir #".*\.html$")))
+            [madness.io :as io]))
 
 (defn load-posts
   "Load all posts for the blog. Returns a sequence of processed blog
-  posts. See the [blog.post][1] namespace for more information about
-  how a processed post looks like.
+  posts, sorted by date, newest first. See the [blog.post][1]
+  namespace for more information about how a processed post looks
+  like.
 
   [1]: #madness.blog.post"
 
   []
 
-  (map blog-post/read-post (list-files (cfg/dirs :posts))))
+  (sort-by :date #(compare %2 %1)
+           (map blog-post/read-post (io/find-files (cfg/dirs :posts)))))
 
 (defn load-pages
   "Load all pages for the blog. Returns a sequence of processed blog
@@ -43,4 +37,4 @@
   
   []
 
-  (map blog-page/read-page (list-files (cfg/dirs :pages))))
+  (map blog-page/read-page (io/find-files (cfg/dirs :pages))))

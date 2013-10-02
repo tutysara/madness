@@ -6,12 +6,10 @@
 
   ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
     :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
-    :license {:name "GNU General Public License - v3"
-              :url "http://www.gnu.org/licenses/gpl.txt"}}
+    :license {:name "Creative Commons Attribution-ShareAlike 3.0"
+              :url "http://creativecommons.org/licenses/by-sa/3.0/"}}
   
-  (:require [madness.render :as render]
-            [ring.adapter.jetty :as jetty]
-            [ring.middleware.file :as ring-file]))
+  (:require [madness.render :as render]))
 
 (defn- str->keyword
   "Takes a string, strips the first char (assumed to be `:`), and
@@ -29,19 +27,24 @@
   * `:index`: The main index page of the blog.
   * `:archive`: The main archive page of the blog.
   * `:tags`: All of the per-tag archives of the blog.
+  * `:date-archives`: Yearly, monthly & daily archives of the blog.
   * `:posts`: All of the posts that belong to the blog.
   * `:pages`: All of the pages that accompany the blog.
   * `:main-feed`: The main Atom feed.
-  * `:tag-feeds`: The per-tag Atom feeds."
+  * `:tag-feeds`: The per-tag Atom feeds.
+  * `:date-feeds`: Yearly, monthly & daily atom feeds."
   
-  ([] (-main ":index" ":archive" ":tags" ":posts" ":main-feed" ":pages" ":tag-feeds"))
+  ([] (-main ":index" ":archive" ":tags" ":date-archives" ":posts"
+             ":main-feed" ":pages" ":tag-feeds" ":date-feeds"))
   ([& args] (dorun (map render/render (map str->keyword args)))))
 
-(defn tst-server
-  "Runs the test server from the public directory"
-  []
-  (let [public "/home/tutysra/src/myprojects/site/tutysara.github.com"]
-    (jetty/run-jetty
-     (-> (fn [req])
-         (ring-file/wrap-file public))
-     {:port 8080 :join? false})))
+(defn madness-fragments
+  "Render post fragments, posts that are not wrapped within the
+  overall design.
+
+  Takes one ore more post URLs, and renders them to the standard
+  output."
+
+  [& post-urls]
+
+  (dorun (map (partial render/render :post-fragment) post-urls)))

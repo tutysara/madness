@@ -6,9 +6,9 @@
   the file gets evaluated."
 
   ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
-    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
-    :license {:name "GNU General Public License - v3"
-              :url "http://www.gnu.org/licenses/gpl.txt"}}
+    :copyright "Copyright (C) 2012-2013 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "Creative Commons Attribution-ShareAlike 3.0"
+              :url "http://creativecommons.org/licenses/by-sa/3.0/"}}
 
   ; Dummy :use, so that the meta-data above gets parsed correctly.
   (:use [clojure.core]))
@@ -83,12 +83,14 @@
 (defmethod recent-posts :default [setting]
   (-> config :recent-posts setting))
 
-;; However, if we want the `:total` number of recent posts, we simply
-;; multiply the number of rows and columns, and add one, so that the
-;; result is suitable for `range`.
+;; However, if we want the `:total` number of recent posts, we either
+;; look that up from the config, or simply multiply the number of rows
+;; and columns, and add one, so that the result is suitable for
+;; `range`.
 (defmethod recent-posts :total [_]
-  (inc (* (recent-posts :columns)
-          (recent-posts :rows))))
+  (or (-> config :recent-posts :total inc)
+      (inc (* (recent-posts :columns)
+              (recent-posts :rows)))))
 
 ;; And to determine how many columns a single recent item should span,
 ;; we divide 12 by the number of columns, and round it.

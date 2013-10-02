@@ -13,9 +13,9 @@
   [1]: https://github.com/algernon/madness/tree/asylum"
 
   ^{:author "Gergely Nagy <algernon@madhouse-project.org>"
-    :copyright "Copyright (C) 2012 Gergely Nagy <algernon@madhouse-project.org>"
-    :license {:name "GNU General Public License - v3"
-              :url "http://www.gnu.org/licenses/gpl.txt"}}
+    :copyright "Copyright (C) 2012-2013 Gergely Nagy <algernon@madhouse-project.org>"
+    :license {:name "Creative Commons Attribution-ShareAlike 3.0"
+              :url "http://creativecommons.org/licenses/by-sa/3.0/"}}
 
   (:require [madness.io :as io]
             [madness.blog :as blog]
@@ -25,28 +25,28 @@
             [madness.blog.page :as blog-page]
             [madness.blog.atom :as blog-feed]
             [madness.config :as cfg]
-            [madness.utils :as utils]))
-
-;; Convenience Var containing all the blog posts
-(def blog-posts (blog/load-posts))
-;; Convenience Var contiaining all the blog pages
-(def blog-pages (blog/load-pages))
-;; Convenience Var containing all the blog posts, grouped by tags.
-(def blog-tag-grouped (utils/group-blog-by-tags blog-posts))
+            [madness.utils :as utils]
+            [madness.resources :as res]))
 
 (defn- render-to-file
   "Render a post or page to a file, using a custom render function."
   [all-posts current-post render-fn file-name]
 
-  (io/write-out-dir file-name
+  (io/write-out-dir (utils/replace-extension file ".html")
                     (apply str (render-fn current-post all-posts))))
+
+(defn- render-to-stdout
+  "Render a post or page to stdout, using a custom render function."
+  [all-posts current-post render-fn]
+
+  (println (apply str (render-fn current-post all-posts))))
 
 ;; ### Rendering
 ;;
 ;; Every part of the site - at least the HTML parts - have a common
-;; structure: a [navigation bar][1], the content area, a sidebar, and
-;; a footer. These are common to all pages and posts, archives and
-;; everything else too.
+;; structure: a [navigation bar][1], the content area, and a footer,
+;; and whatever else the template may contain. These are common to all
+;; pages and posts, archives and everything else too.
 ;;
 ;; What is inside the content area, varies by what page we're talking
 ;; about - as it will be explained just below.
@@ -75,7 +75,7 @@
 ;; [1]: #madness.blog.index
 ;;
 (defmethod render :index [_]
-  (render-to-file blog-posts nil blog-index/blog-index "index.html")) ;; @change - change this ordering for easy understanding
+  (render-to-file nil res/posts blog-index/blog-index "index.html"))
 
 ;; ### The global archive
 ;;
@@ -92,7 +92,7 @@
 ;; [1]: #madness.blog.archive
 ;;
 (defmethod render :archive [_]
-  (render-to-file blog-posts blog-posts
+  (render-to-file res/posts res/posts
                   (partial blog-archive/blog-archive "Archive" "/blog/atom.xml")
                   "blog/archives/index.html"))
 
@@ -119,8 +119,62 @@
 ;; And another, that maps through the tags, and using the previous
 ;; method, renders an archive for each of them.
 (defmethod render :tags [_]
-  (dorun (map #(render :tag-archive blog-posts %1 (get blog-tag-grouped %1))
-              (keys blog-tag-grouped))))
+  (dorun (map #(render :tag-archive res/posts %1
+                       (get res/posts-tag-grouped %1))
+              (keys res/posts-tag-grouped))))
+
+;; ### Date-based archives
+;;
+;; Because posts are rendered into locations based on their creation
+;; date, and because it makes it easier to navigate bigger blogs, we
+;; need archives for each year, month and date.
+;;
+;; These dated archives are exactly the same as the global archive,
+;; except that the recent and archived posts are limited to a
+;; particular date: a year, a month, or a day.
+
+;; To render all the archives for each and every date a post was
+;; created on, we need a function that can render one.
+(defmethod render :date-archive
+  [_ all-posts date dated-posts]
+
+  (let [uri (str "/blog/" date "/")
+        fn (str "." uri "index.html")]
+    (render-to-file all-posts dated-posts
+                    (partial blog-archive/blog-archive
+                             (str "Archive of posts @ " date)
+                             (str "" uri "atom.xml")) fn)))
+
+;; And since all the dated archives follow the same pattern, lets
+;; introduce a helper function!
+
+(defn render-dated-archive
+  "Group blog posts by date, using the function `f` (which is expected
+  to return a formatted date when given a blog post), and render the
+  archives for each and every key within the group."
+
+  [render-type f]
+
+  (let [dated-archive (utils/group-blog-by-date res/posts f)]
+    (dorun (map #(render render-type res/posts %1 (get dated-archive %1))
+                (keys dated-archive)))))
+
+;; With these, we can render daily, montly and yearly archives easily.
+(defmethod render :daily-archives [_]
+  (render-dated-archive :date-archive utils/posts-by-day))
+
+(defmethod render :monthly-archives [_]
+  (render-dated-archive :date-archive utils/posts-by-month)
+  (render :daily-archives))
+
+(defmethod render :yearly-archives [_]
+  (render-dated-archive :date-archive utils/posts-by-year)
+  (render :monthly-archives))
+
+;; And for convenience, we have a function that can be called from the
+;; command line, and will generate all of the above dated archives.
+(defmethod render :date-archives [_]
+  (render :yearly-archives))
 
 ;; ### Blog posts
 ;;
@@ -154,7 +208,19 @@
 
 ;; And now that we can render a single post, we shall render them all!
 (defmethod render :posts [_]
-  (dorun (map (partial render :post blog-posts) blog-posts)))
+  (dorun (map (partial render :post res/posts) res/posts)))
+
+;; To help cross-posting to other engines, it is useful to be able to
+;; render only the content of a post, a fragment, without the rest of
+;; the page wrapped around it.
+;;
+;; These fragments shall be rendered to standard output, as they
+;; should not hit the disk by default.
+(defmethod render :post-fragment
+  [_ post-url]
+
+  (let [post (first (filter #(= (:url %) post-url) res/posts))]
+    (dorun (render-to-stdout nil post blog-post/blog-post-fragment))))
 
 ;; ### Static pages
 ;;
@@ -175,7 +241,7 @@
 
 ;; Then map through all of them, to render them all.
 (defmethod render :pages [_]
-  (dorun (map (partial render :page blog-posts) blog-pages)))
+  (dorun (map (partial render :page res/posts) res/pages)))
 
 ;; ### Atom feeds
 ;;
@@ -194,7 +260,8 @@
 ;; The main feed will be saved into `blog/atom.xml`.
 (defmethod render :main-feed [_]
   (io/write-out-dir "blog/atom.xml"
-                    (blog-feed/emit-atom (cfg/atom-feed :title) "/blog/" blog-posts)))
+                    (blog-feed/emit-atom (cfg/atom-feed :title) "/blog/"
+                                         res/posts)))
 
 ;; A single per-tag feed is saved into something like
 ;; `blog/tag/atom.xml`, similarly to how the per-tag archives were
@@ -205,12 +272,41 @@
   (let [fn (str "." (utils/tag-to-url tag) "atom.xml")]
     (io/write-out-dir fn
                       (blog-feed/emit-atom
-                       (str (cfg/atom-feed :title) ":" tag)
+                       (str (cfg/atom-feed :title) ": " tag)
                        (utils/tag-to-url tag)
                        tagged-posts))))
 
 ;; And as usual, since we can render a feed for a single tag, mapping
 ;; through all the tags is all it takes to render them all.
 (defmethod render :tag-feeds [_]
-  (dorun (map #(render :tag-feed %1 (get blog-tag-grouped %1))
-              (keys blog-tag-grouped))))
+  (dorun (map #(render :tag-feed %1 (get res/posts-tag-grouped %1))
+              (keys res/posts-tag-grouped))))
+
+;; As with archives, we render atom feeds for each year, month and day
+;; a blog post was posted on, in a very similar manner the archives
+;; are rendered.
+
+(defmethod render :date-feed
+  [_ _ date dated-posts]
+
+  (let [uri (str "/blog/" date "/")
+        fn (str "." uri "atom.xml")]
+    (io/write-out-dir fn
+                      (blog-feed/emit-atom
+                       (str (cfg/atom-feed :title) " @ " date)
+                       uri
+                       dated-posts))))
+
+(defmethod render :daily-feeds [_]
+  (render-dated-archive :date-feed utils/posts-by-day))
+
+(defmethod render :monthly-feeds [_]
+  (render-dated-archive :date-feed utils/posts-by-month)
+  (render :daily-feeds))
+
+(defmethod render :yearly-feeds [_]
+  (render-dated-archive :date-feed utils/posts-by-year)
+  (render :monthly-feeds))
+
+(defmethod render :date-feeds [_]
+  (render :yearly-feeds))
