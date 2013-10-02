@@ -27,7 +27,7 @@
   directories if needed. The destination directory can be overridden
   via the configuration mechanism."
 
-  [file-name str]
+  [file str]
 
   (let [fn (str/join "/" [(cfg/dirs :output) file])]
     (println "Writing" fn "...")
@@ -38,7 +38,7 @@
   "Given a file type (a file-name extension) and a file, transform it
   into a format that can be fed to Enlive, and conforms to the
   requirements set by the rendering engine."
-
+  
   (fn [type file] type))
 
 (defn- split-metadata-and-content

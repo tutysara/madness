@@ -30,7 +30,7 @@
 
 (defn- render-to-file
   "Render a post or page to a file, using a custom render function."
-  [all-posts current-post render-fn file-name]
+  [all-posts current-post render-fn file]
 
   (io/write-out-dir (utils/replace-extension file ".html")
                     (apply str (render-fn current-post all-posts))))
